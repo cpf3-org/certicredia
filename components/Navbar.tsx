@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, BrainCircuit } from 'lucide-react';
+import { ShieldCheck, Menu, X } from 'lucide-react';
 import { NAV_ITEMS } from '../constants';
 
 export const Navbar: React.FC = () => {
@@ -18,7 +18,7 @@ export const Navbar: React.FC = () => {
     <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-900/95 backdrop-blur-md border-b border-slate-800 py-4' : 'bg-transparent py-6'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <div className="flex items-center space-x-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <BrainCircuit className="w-8 h-8 text-cyan-400" />
+          <ShieldCheck className="w-8 h-8 text-cyan-400" />
           <span className="text-xl font-bold tracking-wider text-white">CERTI<span className="text-cyan-400">CREDIA</span></span>
         </div>
 

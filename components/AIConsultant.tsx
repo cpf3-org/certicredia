@@ -7,7 +7,7 @@ import { SYSTEM_INSTRUCTION } from '../constants';
 export const AIConsultant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: 'Ciao! Sono l\'assistente virtuale di CertiCredia. Come posso aiutarti con le nostre certificazioni CPF3 oggi?' }
+    { role: 'model', text: 'Ciao! Sono l\'assistente virtuale di SecurCert. Come posso aiutarti con le nostre certificazioni oggi?' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -104,7 +104,7 @@ export const AIConsultant: React.FC = () => {
           <div className="bg-slate-900 p-4 border-b border-slate-700 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-              <h3 className="text-white font-semibold">CertiCredia AI Assistant</h3>
+              <h3 className="text-white font-semibold">SecurCert AI Assistant</h3>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white">
               <Minimize2 className="w-5 h-5" />
@@ -150,7 +150,7 @@ export const AIConsultant: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Chiedi su Certificazione CPF3, costi..."
+                placeholder="Chiedi su ISO 27001, costi..."
                 className="flex-1 bg-slate-800 border-slate-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 placeholder-slate-500"
                 disabled={isLoading}
               />

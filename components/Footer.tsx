@@ -9,20 +9,20 @@ export const Footer: React.FC = () => {
           <div className="col-span-1 md:col-span-1">
              <div className="flex items-center space-x-2 mb-4">
                 <ShieldCheck className="w-6 h-6 text-cyan-400" />
-                <span className="text-lg font-bold text-white">CERTI<span className="text-cyan-400">CREDIA</span></span>
+                <span className="text-lg font-bold text-white">SECUR<span className="text-cyan-400">CERT</span></span>
               </div>
               <p className="text-slate-500 text-sm leading-relaxed">
-                Ente certificatore leader nella sicurezza informatica Human-Centric. Proteggiamo il presente per garantire il futuro.
+                Ente certificatore leader nella sicurezza informatica. Proteggiamo il presente per garantire il futuro.
               </p>
           </div>
           
           <div>
             <h4 className="text-white font-semibold mb-4">Certificazioni</h4>
             <ul className="space-y-2 text-sm text-slate-400">
-              <li><a href="#" className="hover:text-cyan-400">Standard CPF3:2025</a></li>
+              <li><a href="#" className="hover:text-cyan-400">ISO 27001</a></li>
               <li><a href="#" className="hover:text-cyan-400">NIS 2 Compliance</a></li>
-              <li><a href="#" className="hover:text-cyan-400">GDPR Psychology</a></li>
-              <li><a href="#" className="hover:text-cyan-400">Human Risk Audit</a></li>
+              <li><a href="#" className="hover:text-cyan-400">GDPR Audit</a></li>
+              <li><a href="#" className="hover:text-cyan-400">TISAX</a></li>
             </ul>
           </div>
 
@@ -39,7 +39,7 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="text-white font-semibold mb-4">Contatti</h4>
             <ul className="space-y-2 text-sm text-slate-400">
-              <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> info@certicredia.it</li>
+              <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> info@securcert.it</li>
               <li className="flex gap-4 mt-4">
                 <a href="#" className="bg-slate-800 p-2 rounded-full hover:bg-cyan-500 hover:text-slate-900 transition-colors"><Linkedin className="w-4 h-4" /></a>
                 <a href="#" className="bg-slate-800 p-2 rounded-full hover:bg-cyan-500 hover:text-slate-900 transition-colors"><Twitter className="w-4 h-4" /></a>
