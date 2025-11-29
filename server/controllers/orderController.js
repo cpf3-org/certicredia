@@ -115,8 +115,6 @@ export const createOrder = async (req, res) => {
 
     await client.query('COMMIT');
 
-    await client.query('COMMIT');
-
     logger.info(\`✅ Ordine creato: \${orderNumber} per \${req.user.email}\`);
 
     // Send email notifications (non-blocking)
