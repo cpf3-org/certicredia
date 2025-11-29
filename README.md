@@ -407,9 +407,8 @@ Questo creerà:
 - Certificazione CPF3 Base (€2999)
 - Certificazione CPF3 Professional (€7999)
 - Certificazione CPF3 Enterprise (€19999)
-- Corso Auditor SecurCert (€1999)
+- Corso Auditor CertiCredia (€1999)
 - Audit NIS2 Compliance (€4999)
-- Certificazione ISO 27001 (€12999)
 - Penetration Test Base (€3499)
 - Formazione GDPR Aziendale (€999)
 
