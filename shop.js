@@ -10,7 +10,7 @@ async function api(endpoint, opts = {}) {
     const token = getToken();
     const res = await fetch(API + endpoint, {
         ...opts,
-        headers: { 'Content-Type': 'application/json', ...(token && { Authorization: \`Bearer \${token}\` }), ...opts.headers },
+        headers: { 'Content-Type': 'application/json', ...(token && { Authorization: `Bearer ${token}` }), ...opts.headers },
         credentials: 'include'
     });
     const data = await res.json();
@@ -25,8 +25,8 @@ async function getProfile() { const d = await api('/auth/profile'); if (d.succes
 async function getProducts() { const d = await api('/products'); if (d.success) state.products = d.data; return d; }
 async function getCart() { const d = await api('/cart'); if (d.success) state.cart = d.data; return d; }
 async function addToCart(pid, qty = 1) { return await api('/cart', { method: 'POST', body: JSON.stringify({ product_id: pid, quantity: qty }) }); }
-async function updateCartItem(id, qty) { return await api(\`/cart/\${id}\`, { method: 'PUT', body: JSON.stringify({ quantity: qty }) }); }
-async function removeFromCart(id) { return await api(\`/cart/\${id}\`, { method: 'DELETE' }); }
+async function updateCartItem(id, qty) { return await api(`/cart/${id}`, { method: 'PUT', body: JSON.stringify({ quantity: qty }) }); }
+async function removeFromCart(id) { return await api(`/cart/${id}`, { method: 'DELETE' }); }
 async function createOrder(data) { return await api('/orders', { method: 'POST', body: JSON.stringify(data) }); }
 async function getOrders() { const d = await api('/orders'); if (d.success) state.orders = d.data; return d; }
 
@@ -34,19 +34,19 @@ function notify(msg, type = 'info') {
     const n = document.createElement('div');
     n.className = 'fixed top-24 right-6 z-50 animate-slide-in';
     const bg = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-cyan-500';
-    n.innerHTML = \`<div class="\${bg} text-white px-6 py-4 rounded-lg shadow-2xl">\${msg}</div>\`;
+    n.innerHTML = `<div class="${bg} text-white px-6 py-4 rounded-lg shadow-2xl">${msg}</div>`;
     document.body.appendChild(n);
     setTimeout(() => n.remove(), 5000);
 }
 
-function price(p) { return \`€\${parseFloat(p).toFixed(2)}\`; }
+function price(p) { return `€${parseFloat(p).toFixed(2)}`; }
 function updateCartBadge(c) { const b = document.getElementById('cart-badge'); if (b) { b.textContent = c; b.classList.toggle('hidden', c === 0); } }
 function updateAuthUI() {
     const target = document.getElementById('auth-buttons') || document.getElementById('auth-nav');
     if (!target) return;
-    target.innerHTML = getToken() && state.user ? 
-        \`<a href="/dashboard.html" class="text-slate-300 hover:text-white">\${state.user.name}</a><button onclick="handleLogout()" class="text-red-400">Logout</button>\` :
-        \`<a href="/auth.html" class="btn-outline">Accedi</a>\`;
+    target.innerHTML = getToken() && state.user ?
+        `<a href="/dashboard.html" class="text-slate-300 hover:text-white">${state.user.name}</a><button onclick="handleLogout()" class="text-red-400">Logout</button>` :
+        `<a href="/auth.html" class="btn-outline">Accedi</a>`;
 }
 
 async function initShop() {
@@ -55,7 +55,7 @@ async function initShop() {
     try {
         const d = await getProducts();
         loading?.classList.add('hidden');
-        grid.innerHTML = d.data.map(p => \`
+        grid.innerHTML = d.data.map(p => `
             <div class="bg-slate-800 rounded-xl overflow-hidden hover:ring-2 ring-cyan-500 transition">
                 <div class="aspect-video bg-slate-700 flex items-center justify-center">
                     <svg class="w-16 h-16 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,16 +63,16 @@ async function initShop() {
                     </svg>
                 </div>
                 <div class="p-6">
-                    <span class="text-xs text-cyan-400 font-semibold">\${p.category}</span>
-                    <h3 class="text-xl font-bold my-2">\${p.name}</h3>
-                    <p class="text-slate-400 text-sm mb-4">\${p.short_description}</p>
+                    <span class="text-xs text-cyan-400 font-semibold">${p.category}</span>
+                    <h3 class="text-xl font-bold my-2">${p.name}</h3>
+                    <p class="text-slate-400 text-sm mb-4">${p.short_description}</p>
                     <div class="flex justify-between items-center">
-                        <span class="text-2xl font-bold text-cyan-400">\${price(p.price)}</span>
-                        <button onclick="handleAddToCart(\${p.id})" class="btn-primary">Aggiungi</button>
+                        <span class="text-2xl font-bold text-cyan-400">${price(p.price)}</span>
+                        <button onclick="handleAddToCart(${p.id})" class="btn-primary">Aggiungi</button>
                     </div>
                 </div>
             </div>
-        \`).join('');
+        `).join('');
     } catch (e) { loading?.classList.add('hidden'); notify(e.message, 'error'); }
 }
 
@@ -87,20 +87,20 @@ async function initCart() {
     try {
         const d = await getCart();
         if (d.count === 0) { items.classList.add('hidden'); empty?.classList.remove('hidden'); return; }
-        items.innerHTML = d.data.map(i => \`
+        items.innerHTML = d.data.map(i => `
             <div class="bg-slate-800 rounded-xl p-6 flex gap-6">
                 <div class="flex-1">
-                    <h3 class="text-lg font-bold">\${i.name}</h3>
+                    <h3 class="text-lg font-bold">${i.name}</h3>
                     <div class="mt-4 flex items-center gap-4">
-                        <button onclick="updateQty(\${i.id}, \${i.quantity - 1})" class="w-8 h-8 bg-slate-700 rounded">-</button>
-                        <span>\${i.quantity}</span>
-                        <button onclick="updateQty(\${i.id}, \${i.quantity + 1})" class="w-8 h-8 bg-slate-700 rounded">+</button>
-                        <span class="text-xl font-bold text-cyan-400">\${price(i.total_price)}</span>
+                        <button onclick="updateQty(${i.id}, ${i.quantity - 1})" class="w-8 h-8 bg-slate-700 rounded">-</button>
+                        <span>${i.quantity}</span>
+                        <button onclick="updateQty(${i.id}, ${i.quantity + 1})" class="w-8 h-8 bg-slate-700 rounded">+</button>
+                        <span class="text-xl font-bold text-cyan-400">${price(i.total_price)}</span>
                     </div>
                 </div>
-                <button onclick="handleRemoveCart(\${i.id})" class="text-red-400">×</button>
+                <button onclick="handleRemoveCart(${i.id})" class="text-red-400">×</button>
             </div>
-        \`).join('');
+        `).join('');
         document.getElementById('cart-subtotal').textContent = price(d.totalAmount);
         document.getElementById('cart-tax').textContent = price(d.totalAmount * 0.22);
         document.getElementById('cart-total').textContent = price(d.totalAmount * 1.22);
@@ -131,7 +131,7 @@ async function initCheckout() {
             form.billing_email.value = user.data.email || '';
             form.billing_phone.value = user.data.phone || '';
         }
-        document.getElementById('order-summary').innerHTML = cart.data.map(i => \`<div class="flex justify-between text-sm"><span>\${i.name} x\${i.quantity}</span><span>\${price(i.total_price)}</span></div>\`).join('');
+        document.getElementById('order-summary').innerHTML = cart.data.map(i => `<div class="flex justify-between text-sm"><span>${i.name} x${i.quantity}</span><span>${price(i.total_price)}</span></div>`).join('');
         document.getElementById('order-total').textContent = price(cart.totalAmount);
     } catch (e) { notify(e.message, 'error'); }
     form.onsubmit = async (e) => { e.preventDefault(); try { await createOrder(Object.fromEntries(new FormData(e.target))); notify('Ordine creato!', 'success'); setTimeout(() => location.href = '/dashboard.html', 2000); } catch (er) { notify(er.message, 'error'); } };
@@ -145,9 +145,9 @@ async function initDashboard() {
         const ol = document.getElementById('orders-list');
         if (orders.count === 0) { ol.classList.add('hidden'); document.getElementById('no-orders')?.classList.remove('hidden'); }
         else {
-            ol.innerHTML = orders.data.map(o => \`<div class="bg-slate-700 rounded-lg p-4 flex justify-between"><div><div class="font-bold">\${o.order_number}</div><div class="text-sm text-slate-400">\${new Date(o.created_at).toLocaleDateString('it-IT')}</div></div><div class="text-right"><div class="font-bold text-cyan-400">\${price(o.total_amount)}</div></div></div>\`).join('');
+            ol.innerHTML = orders.data.map(o => `<div class="bg-slate-700 rounded-lg p-4 flex justify-between"><div><div class="font-bold">${o.order_number}</div><div class="text-sm text-slate-400">${new Date(o.created_at).toLocaleDateString('it-IT')}</div></div><div class="text-right"><div class="font-bold text-cyan-400">${price(o.total_amount)}</div></div></div>`).join('');
         }
-        document.getElementById('profile-info').innerHTML = \`<div class="space-y-3 text-sm"><div>Nome: \${user.data.name}</div><div>Email: \${user.data.email}</div></div>\`;
+        document.getElementById('profile-info').innerHTML = `<div class="space-y-3 text-sm"><div>Nome: ${user.data.name}</div><div>Email: ${user.data.email}</div></div>`;
     } catch (e) { notify(e.message, 'error'); }
 }
 
