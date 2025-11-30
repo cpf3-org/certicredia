@@ -93,6 +93,11 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
+//Shop endpoint - serve index.html
+app.get('/shop', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'shop.html'));
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint non trovato' });
