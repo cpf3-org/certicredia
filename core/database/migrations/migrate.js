@@ -45,6 +45,10 @@ const removeMigration = async (client, name) => {
 // List of migrations in order
 const migrations = [
   {
+    name: '000_base_schema',
+    module: () => import('./000_base_schema.js')
+  },
+  {
     name: '001_accreditation_system',
     module: () => import('./001_accreditation_system.js')
   }
