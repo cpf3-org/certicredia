@@ -216,8 +216,9 @@
         }
 
         // No MFA required - store token and redirect
-        if (data.data && data.data.token) {
-          localStorage.setItem('token', data.data.token);
+        if (data.data && data.data.accessToken) {
+          localStorage.setItem('token', data.data.accessToken);
+          localStorage.setItem('refreshToken', data.data.refreshToken);
           localStorage.setItem('user', JSON.stringify(data.data.user));
 
           showMessage('Login effettuato con successo!', 'success');
@@ -260,8 +261,9 @@
         }
 
         // Store token and user data
-        if (data.data && data.data.token) {
-          localStorage.setItem('token', data.data.token);
+        if (data.data && data.data.accessToken) {
+          localStorage.setItem('token', data.data.accessToken);
+          localStorage.setItem('refreshToken', data.data.refreshToken);
           localStorage.setItem('user', JSON.stringify(data.data.user));
 
           showMessage('Autenticazione completata!', 'success');
