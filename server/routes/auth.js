@@ -9,7 +9,8 @@ import {
   verifyEmail,
   forgotPassword,
   resetPassword,
-  getAllUsers
+  getAllUsers,
+  updateUser
 } from '../controllers/authController.js';
 import { authenticate, isAdmin } from '../middleware/auth.js';
 import {
@@ -93,5 +94,12 @@ router.post('/reset-password', resetPasswordValidationRules, validate, resetPass
  * @access  Private (Admin)
  */
 router.get('/users', authenticate, isAdmin, getAllUsers);
+
+/**
+ * @route   PUT /api/auth/users/:id
+ * @desc    Update user (Admin only)
+ * @access  Private (Admin)
+ */
+router.put('/users/:id', authenticate, isAdmin, updateUser);
 
 export default router;
