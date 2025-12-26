@@ -266,10 +266,10 @@ const initDatabase = async () => {
   }
 };
 
-// Initialize database on startup
-initDatabase().catch(err => {
-  logger.error('Impossibile inizializzare il database:', err);
-  process.exit(1);
-});
+// Initialize database on startup - DISABLED (use npm run setup instead)
+// initDatabase().catch(err => {
+//   logger.error('Impossibile inizializzare il database:', err);
+//   process.exit(1);
+// });
 
 export { pool, initDatabase };
