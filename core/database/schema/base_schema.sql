@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
   name VARCHAR(255) NOT NULL,
   company VARCHAR(255),
   phone VARCHAR(50),
-  role VARCHAR(50) DEFAULT 'user' CHECK (role IN ('user', 'admin')),
+  role VARCHAR(50) DEFAULT 'user',
   active BOOLEAN DEFAULT true,
   email_verified BOOLEAN DEFAULT false,
   verification_token VARCHAR(255),
