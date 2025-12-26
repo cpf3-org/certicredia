@@ -697,3 +697,79 @@ export const getAllUsers = async (req, res) => {
     });
   }
 };
+
+/**
+ * Update user (Admin only)
+ */
+export const updateUser = async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { id } = req.params;
+    const { active, role } = req.body;
+
+    // Prevent admin from disabling themselves
+    if (req.user.id === parseInt(id) && active === false) {
+      return res.status(400).json({
+        success: false,
+        message: 'Non puoi disattivare il tuo stesso account'
+      });
+    }
+
+    // Build update query dynamically based on provided fields
+    const updates = [];
+    const values = [];
+    let paramCount = 1;
+
+    if (typeof active !== 'undefined') {
+      updates.push(`active = $${paramCount++}`);
+      values.push(active);
+    }
+
+    if (role) {
+      updates.push(`role = $${paramCount++}`);
+      values.push(role);
+    }
+
+    if (updates.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nessun campo da aggiornare'
+      });
+    }
+
+    // Add user ID to values
+    values.push(id);
+
+    const result = await client.query(
+      `UPDATE users
+       SET ${updates.join(', ')}, updated_at = NOW()
+       WHERE id = $${paramCount}
+       RETURNING id, email, name, role, active`,
+      values
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utente non trovato'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: result.rows[0],
+      message: 'Utente aggiornato con successo'
+    });
+
+  } catch (error) {
+    logger.error('Errore aggiornamento utente:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante l\'aggiornamento dell\'utente'
+    });
+  } finally {
+    client.release();
+  }
+};

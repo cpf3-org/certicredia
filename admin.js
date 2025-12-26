@@ -461,6 +461,11 @@ async function loadUsers() {
                         ${user.active ? 'Attivo' : 'Inattivo'}
                     </span>
                 </td>
+                <td class="p-4 text-right">
+                    <button onclick="toggleUserStatus(${user.id}, ${!user.active})" class="text-${user.active ? 'red' : 'green'}-400 hover:text-${user.active ? 'red' : 'green'}-300 text-sm">
+                        ${user.active ? 'Disattiva' : 'Attiva'}
+                    </button>
+                </td>
             </tr>
         `).join('');
 
@@ -496,9 +501,16 @@ async function loadContacts() {
                 <td class="p-4 text-sm text-slate-300 max-w-xs truncate">${contact.message || '-'}</td>
                 <td class="p-4 text-slate-300">${new Date(contact.created_at).toLocaleDateString('it-IT')}</td>
                 <td class="p-4">
-                    <span class="px-3 py-1 rounded-full text-xs ${getContactStatusColor(contact.status)}">
-                        ${getContactStatusLabel(contact.status)}
-                    </span>
+                    <select onchange="updateContactStatus(${contact.id}, this.value)" class="px-3 py-1 rounded-full text-xs bg-slate-900 border ${getContactStatusBorderColor(contact.status)} ${getContactStatusTextColor(contact.status)}">
+                        <option value="new" ${contact.status === 'new' ? 'selected' : ''}>Nuovo</option>
+                        <option value="contacted" ${contact.status === 'contacted' ? 'selected' : ''}>Contattato</option>
+                        <option value="closed" ${contact.status === 'closed' ? 'selected' : ''}>Chiuso</option>
+                    </select>
+                </td>
+                <td class="p-4 text-right">
+                    <button onclick="viewContactDetails(${contact.id})" class="text-cyan-400 hover:text-cyan-300 text-sm">
+                        Dettagli
+                    </button>
                 </td>
             </tr>
         `).join('');
@@ -600,4 +612,142 @@ function notify(message, type = 'info') {
     setTimeout(() => {
         notification.remove();
     }, 3000);
+}
+
+// User Management Functions
+async function toggleUserStatus(userId, newStatus) {
+    if (!confirm(`Sei sicuro di voler ${newStatus ? 'attivare' : 'disattivare'} questo utente?`)) {
+        return;
+    }
+
+    try {
+        const response = await apiCall(`/api/auth/users/${userId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ active: newStatus })
+        });
+
+        if (!response) return;
+
+        notify('Stato utente aggiornato', 'success');
+        loadUsers();
+
+    } catch (error) {
+        console.error('Toggle user status error:', error);
+        notify('Errore aggiornamento stato utente', 'error');
+    }
+}
+
+// Contact Management Functions
+async function updateContactStatus(contactId, newStatus) {
+    try {
+        const response = await apiCall(`/api/contact/${contactId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
+
+        if (!response) return;
+
+        notify('Stato contatto aggiornato', 'success');
+        loadContacts();
+
+    } catch (error) {
+        console.error('Update contact status error:', error);
+        notify('Errore aggiornamento stato contatto', 'error');
+    }
+}
+
+async function viewContactDetails(contactId) {
+    try {
+        const response = await apiCall(`/api/contact/${contactId}`);
+        if (!response) return;
+
+        const data = await response.json();
+        const contact = data.data;
+
+        const details = `
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-slate-400">Nome</p>
+                        <p class="font-medium">${contact.name}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-slate-400">Email</p>
+                        <p class="font-medium">${contact.email}</p>
+                    </div>
+                    ${contact.company ? `
+                    <div>
+                        <p class="text-sm text-slate-400">Azienda</p>
+                        <p class="font-medium">${contact.company}</p>
+                    </div>
+                    ` : ''}
+                    ${contact.linkedin ? `
+                    <div>
+                        <p class="text-sm text-slate-400">LinkedIn</p>
+                        <p class="font-medium"><a href="${contact.linkedin}" target="_blank" class="text-cyan-400 hover:underline">${contact.linkedin}</a></p>
+                    </div>
+                    ` : ''}
+                    <div>
+                        <p class="text-sm text-slate-400">Tipo Utente</p>
+                        <p class="font-medium">${contact.user_type === 'COMPANY' ? 'Azienda' : 'Specialist'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-slate-400">Data Contatto</p>
+                        <p class="font-medium">${new Date(contact.created_at).toLocaleString('it-IT')}</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400 mb-2">Messaggio</p>
+                    <p class="bg-slate-900 p-4 rounded-lg">${contact.message || 'Nessun messaggio'}</p>
+                </div>
+            </div>
+        `;
+
+        // Create modal
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+            <div class="bg-slate-800 rounded-xl p-8 max-w-2xl w-full mx-4 border border-slate-700">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Dettagli Contatto</h2>
+                    <button onclick="this.closest('.fixed').remove()" class="text-slate-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                ${details}
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
+
+    } catch (error) {
+        console.error('View contact details error:', error);
+        notify('Errore caricamento dettagli contatto', 'error');
+    }
+}
+
+function getContactStatusBorderColor(status) {
+    const colors = {
+        'new': 'border-cyan-500',
+        'contacted': 'border-blue-500',
+        'closed': 'border-slate-500'
+    };
+    return colors[status] || 'border-slate-500';
+}
+
+function getContactStatusTextColor(status) {
+    const colors = {
+        'new': 'text-cyan-400',
+        'contacted': 'text-blue-400',
+        'closed': 'text-slate-400'
+    };
+    return colors[status] || 'text-slate-400';
 }
