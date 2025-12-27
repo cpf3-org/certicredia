@@ -6,8 +6,6 @@ async function seedSimpleDemo() {
   try {
     console.log('🌱 Seeding simple demo data...\n');
 
-    await client.query('BEGIN');
-
     // Insert organizations (skip if exist to avoid errors)
     console.log('🏢 Creating organizations...');
     const organizations = [
@@ -81,7 +79,6 @@ async function seedSimpleDemo() {
     console.log('   - 5 contacts\n');
 
   } catch (error) {
-    await client.query('ROLLBACK');
     console.error('❌ Error seeding demo data:', error);
     throw error;
   } finally {
