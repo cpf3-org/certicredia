@@ -179,9 +179,7 @@ function initLogoutButton() {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      if (confirm('Sei sicuro di voler uscire?')) {
-        logout();
-      }
+      logout();
     });
   }
 }
