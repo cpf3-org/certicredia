@@ -221,15 +221,16 @@ async function seedEnhancedDemoData() {
         const randomProduct = Math.floor(Math.random() * productIds.length);
         const productId = productIds[randomProduct];
         const quantity = 1;
-        const price = productsData[randomProduct].price;
+        const unitPrice = productsData[randomProduct].price;
+        const totalPrice = unitPrice * quantity;
 
         await client.query(
-          `INSERT INTO order_items (order_id, product_id, quantity, price)
-           VALUES ($1, $2, $3, $4)`,
-          [orderId, productId, quantity, price]
+          `INSERT INTO order_items (order_id, product_id, product_name, unit_price, quantity, total_price)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [orderId, productId, productsData[randomProduct].name, unitPrice, quantity, totalPrice]
         );
 
-        totalAmount += price * quantity;
+        totalAmount += totalPrice;
       }
 
       // Aggiorna totale ordine
