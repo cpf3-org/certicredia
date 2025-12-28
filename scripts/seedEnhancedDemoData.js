@@ -316,7 +316,7 @@ async function seedEnhancedDemoData() {
 
       // Aggiungi CPE records (formazione continua)
       for (let i = 0; i < 5; i++) {
-        const activities = ['Training', 'Conference', 'Workshop', 'Webinar', 'Self-Study'];
+        const activities = ['training', 'audit', 'research', 'teaching', 'conference', 'other'];
         const activityType = activities[Math.floor(Math.random() * activities.length)];
         const hours = Math.floor(Math.random() * 20) + 4;
 
@@ -326,17 +326,18 @@ async function seedEnhancedDemoData() {
 
         await client.query(
           `INSERT INTO specialist_cpe_records (
-            specialist_profile_id, user_id, activity_type, title, activity_date, hours, credits, description, provider
-          ) VALUES ($1, $2, $3, $4, NOW() - INTERVAL '${Math.floor(Math.random() * 180)} days', $5, $6, $7, $8)`,
+            specialist_profile_id, user_id, activity_type, title, activity_date, hours, credits, description, provider, status
+          ) VALUES ($1, $2, $3, $4, NOW() - INTERVAL '${Math.floor(Math.random() * 180)} days', $5, $6, $7, $8, $9)`,
           [
             specialistProfileId,
             userId,
-            activityType.toLowerCase(),
-            `${activityType} on Cybersecurity`,
+            activityType,
+            `${activityType.charAt(0).toUpperCase() + activityType.slice(1)} on Cybersecurity`,
             hours,
             hours * 0.5, // credits = hours * 0.5
-            `Partecipazione a ${activityType.toLowerCase()} su tematiche di cybersecurity`,
-            'CertiCredia Italia'
+            `Partecipazione a ${activityType} su tematiche di cybersecurity`,
+            'CertiCredia Italia',
+            'verified'
           ]
         );
       }
