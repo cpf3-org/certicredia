@@ -267,6 +267,7 @@
     async function loadSpecialistData() {
       try {
         const token = localStorage.getItem('authToken');
+        console.log('🔍 Loading specialist data...');
 
         const response = await fetch(`${API_BASE}/api/specialists/dashboard`, {
           headers: {
@@ -274,15 +275,22 @@
           }
         });
 
+        console.log('📡 Response status:', response.status);
         const data = await response.json();
+        console.log('📦 Response data:', data);
 
-        if (data.success) {
+        if (data.success && data.data) {
           currentSpecialist = data.data;
+          console.log('✅ Specialist loaded:', currentSpecialist);
           displaySpecialistData(currentSpecialist);
           loadAssignedOrganizations();
+        } else {
+          console.error('❌ Errore caricamento specialist:', data.message || 'Nessun dato');
+          alert('Errore: ' + (data.message || 'Impossibile caricare i dati dello specialist. Verifica di avere un profilo specialist associato.'));
         }
       } catch (error) {
-        console.error('Load specialist error:', error);
+        console.error('💥 Load specialist error:', error);
+        alert('Errore di connessione: ' + error.message);
       }
     }
 
