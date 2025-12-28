@@ -113,7 +113,7 @@ export const addToCart = async (req, res) => {
           await client.query('BEGIN');
 
           const existing = await client.query(
-            'SELECT id, quantity FROM cart_itemsWHERE user_id = $1 AND product_id = $2',
+            'SELECT id, quantity FROM cart_items WHERE user_id = $1 AND product_id = $2',
             [req.user.id, product_id]
           );
 
@@ -162,7 +162,7 @@ export const addToCart = async (req, res) => {
           await client.query('BEGIN');
 
           const existing = await client.query(
-            'SELECT id, quantity FROM cart_itemsWHERE session_id = $1 AND product_id = $2',
+            'SELECT id, quantity FROM cart_items WHERE session_id = $1 AND product_id = $2',
             [sessionId, product_id]
           );
 
