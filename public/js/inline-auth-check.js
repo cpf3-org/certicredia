@@ -28,7 +28,7 @@
     // No token = immediate redirect (before rendering)
     if (!token) {
       const returnUrl = encodeURIComponent(currentPath);
-      window.location.replace(`/public/pages/login.html?returnUrl=${returnUrl}`);
+      window.location.replace(`/public/pages/app-landing.html?returnUrl=${returnUrl}`);
       return; // Stop execution
     }
 
@@ -50,7 +50,7 @@
                   </svg>
                   <h1 style="font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">Accesso Negato</h1>
                   <p style="color: #6b7280; margin-bottom: 1.5rem;">Non hai i permessi necessari per accedere a questa pagina.</p>
-                  <a href="/public/pages/login.html" style="display: inline-block; background: #0891b2; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">
+                  <a href="/public/pages/app-landing.html" style="display: inline-block; background: #0891b2; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">
                     Vai al Login
                   </a>
                 </div>

@@ -3,7 +3,7 @@ import pkg from 'bcrypt';
 const { hash } = pkg;
 import logger from '../server/utils/logger.js';
 
-const SALT_ROUNDS = 12;
+const SALT_ROUNDS = 4;  // Low for demo speed
 
 async function seedEnhancedDemoData() {
   const client = await pool.connect();
@@ -90,32 +90,32 @@ async function seedEnhancedDemoData() {
     console.log('\n🏢 Creating organizations...');
 
     const organizationsData = [
-      { name: 'TechCorp S.p.A.', type: 'corporate', vat: 'IT12345678901', city: 'Milano', adminEmail: 'admin@techcorp.it' },
-      { name: 'Finance Bank Italia', type: 'corporate', vat: 'IT98765432109', city: 'Roma', adminEmail: 'admin@financebank.it' },
-      { name: 'HealthSys Italia', type: 'corporate', vat: 'IT11223344556', city: 'Torino', adminEmail: 'admin@healthsys.it' },
-      { name: 'Retail Group SpA', type: 'corporate', vat: 'IT66778899001', city: 'Bologna', adminEmail: 'admin@retailgroup.it' },
-      { name: 'Energy Plus SRL', type: 'corporate', vat: 'IT55443322110', city: 'Napoli', adminEmail: 'admin@energyplus.it' },
-      { name: 'Ministero della Difesa', type: 'government', vat: 'IT00000000001', city: 'Roma', adminEmail: 'admin@techcorp.it' },
-      { name: 'Regione Lombardia', type: 'government', vat: 'IT11111111112', city: 'Milano', adminEmail: 'admin@techcorp.it' },
-      { name: 'Università di Bologna', type: 'non_profit', vat: 'IT22222222223', city: 'Bologna', adminEmail: 'admin@techcorp.it' },
-      { name: 'Croce Rossa Italiana', type: 'non_profit', vat: 'IT33333333334', city: 'Roma', adminEmail: 'admin@techcorp.it' },
-      { name: 'StartupInnovation SRL', type: 'corporate', vat: 'IT44444444445', city: 'Milano', adminEmail: 'admin@techcorp.it' },
-      { name: 'CloudService SRL', type: 'corporate', vat: 'IT55555555556', city: 'Firenze', adminEmail: 'admin@techcorp.it' },
-      { name: 'DataTech Italia', type: 'corporate', vat: 'IT66666666667', city: 'Genova', adminEmail: 'admin@techcorp.it' },
-      { name: 'SecurityFirst SpA', type: 'corporate', vat: 'IT77777777778', city: 'Venezia', adminEmail: 'admin@techcorp.it' },
-      { name: 'NetworkSolutions', type: 'corporate', vat: 'IT88888888889', city: 'Palermo', adminEmail: 'admin@techcorp.it' },
-      { name: 'AI Innovations SRL', type: 'corporate', vat: 'IT99999999990', city: 'Bari', adminEmail: 'admin@techcorp.it' },
-      { name: 'BlockChain Italia', type: 'corporate', vat: 'IT10101010101', city: 'Catania', adminEmail: 'admin@techcorp.it' },
-      { name: 'IoT Systems SpA', type: 'corporate', vat: 'IT20202020202', city: 'Verona', adminEmail: 'admin@techcorp.it' },
-      { name: 'Digital Marketing SRL', type: 'corporate', vat: 'IT30303030303', city: 'Padova', adminEmail: 'admin@techcorp.it' },
-      { name: 'FinTech Innovators', type: 'corporate', vat: 'IT40404040404', city: 'Trieste', adminEmail: 'admin@techcorp.it' },
-      { name: 'PharmaTech Italia', type: 'corporate', vat: 'IT50505050505', city: 'Parma', adminEmail: 'admin@techcorp.it' }
+      { name: 'TechCorp S.p.A.', type: 'PRIVATE_COMPANY', vat: 'IT12345678901', city: 'Milano', adminEmail: 'admin@techcorp.it' },
+      { name: 'Finance Bank Italia', type: 'PRIVATE_COMPANY', vat: 'IT98765432109', city: 'Roma', adminEmail: 'admin@financebank.it' },
+      { name: 'HealthSys Italia', type: 'PRIVATE_COMPANY', vat: 'IT11223344556', city: 'Torino', adminEmail: 'admin@healthsys.it' },
+      { name: 'Retail Group SpA', type: 'PRIVATE_COMPANY', vat: 'IT66778899001', city: 'Bologna', adminEmail: 'admin@retailgroup.it' },
+      { name: 'Energy Plus SRL', type: 'PRIVATE_COMPANY', vat: 'IT55443322110', city: 'Napoli', adminEmail: 'admin@energyplus.it' },
+      { name: 'Ministero della Difesa', type: 'PUBLIC_ENTITY', vat: 'IT00000000001', city: 'Roma', adminEmail: 'admin@techcorp.it' },
+      { name: 'Regione Lombardia', type: 'PUBLIC_ENTITY', vat: 'IT11111111112', city: 'Milano', adminEmail: 'admin@techcorp.it' },
+      { name: 'Università di Bologna', type: 'NON_PROFIT', vat: 'IT22222222223', city: 'Bologna', adminEmail: 'admin@techcorp.it' },
+      { name: 'Croce Rossa Italiana', type: 'NON_PROFIT', vat: 'IT33333333334', city: 'Roma', adminEmail: 'admin@techcorp.it' },
+      { name: 'StartupInnovation SRL', type: 'PRIVATE_COMPANY', vat: 'IT44444444445', city: 'Milano', adminEmail: 'admin@techcorp.it' },
+      { name: 'CloudService SRL', type: 'PRIVATE_COMPANY', vat: 'IT55555555556', city: 'Firenze', adminEmail: 'admin@techcorp.it' },
+      { name: 'DataTech Italia', type: 'PRIVATE_COMPANY', vat: 'IT66666666667', city: 'Genova', adminEmail: 'admin@techcorp.it' },
+      { name: 'SecurityFirst SpA', type: 'PRIVATE_COMPANY', vat: 'IT77777777778', city: 'Venezia', adminEmail: 'admin@techcorp.it' },
+      { name: 'NetworkSolutions', type: 'PRIVATE_COMPANY', vat: 'IT88888888889', city: 'Palermo', adminEmail: 'admin@techcorp.it' },
+      { name: 'AI Innovations SRL', type: 'PRIVATE_COMPANY', vat: 'IT99999999990', city: 'Bari', adminEmail: 'admin@techcorp.it' },
+      { name: 'BlockChain Italia', type: 'PRIVATE_COMPANY', vat: 'IT10101010101', city: 'Catania', adminEmail: 'admin@techcorp.it' },
+      { name: 'IoT Systems SpA', type: 'PRIVATE_COMPANY', vat: 'IT20202020202', city: 'Verona', adminEmail: 'admin@techcorp.it' },
+      { name: 'Digital Marketing SRL', type: 'PRIVATE_COMPANY', vat: 'IT30303030303', city: 'Padova', adminEmail: 'admin@techcorp.it' },
+      { name: 'FinTech Innovators', type: 'PRIVATE_COMPANY', vat: 'IT40404040404', city: 'Trieste', adminEmail: 'admin@techcorp.it' },
+      { name: 'PharmaTech Italia', type: 'PRIVATE_COMPANY', vat: 'IT50505050505', city: 'Parma', adminEmail: 'admin@techcorp.it' }
     ];
 
     const orgIds = {};
     for (const org of organizationsData) {
       const result = await client.query(
-        `INSERT INTO organizations (name, type, vat_number, address, city, postal_code, country, status, contact_email)
+        `INSERT INTO organizations (name, organization_type, vat_number, address, city, postal_code, country, status, email)
          VALUES ($1, $2, $3, $4, $5, $6, 'IT', 'active', $7)
          RETURNING id`,
         [org.name, org.type, org.vat, `Via ${org.name} 123`, org.city, '00100', org.adminEmail]
@@ -159,8 +159,8 @@ async function seedEnhancedDemoData() {
     const productIds = [];
     for (const product of productsData) {
       const result = await client.query(
-        `INSERT INTO products (name, slug, description, price, category, duration, active)
-         VALUES ($1, $2, $3, $4, $5, $6, true)
+        `INSERT INTO products (name, slug, description, price, category, active)
+         VALUES ($1, $2, $3, $4, $5, true)
          ON CONFLICT (slug) DO UPDATE SET price = EXCLUDED.price
          RETURNING id`,
         [
@@ -168,8 +168,7 @@ async function seedEnhancedDemoData() {
           product.slug,
           `Certificazione professionale ${product.name}. Corso completo con esame finale.`,
           product.price,
-          product.category,
-          product.duration
+          product.category
         ]
       );
       productIds.push(result.rows[0].id);
@@ -194,15 +193,20 @@ async function seedEnhancedDemoData() {
       const orderDate = new Date();
       orderDate.setDate(orderDate.getDate() - daysAgo);
 
+      const orderNumber = `ORD-${Date.now()}-${i}`;
       const orderResult = await client.query(
-        `INSERT INTO orders (user_id, status, total_amount, payment_status, shipping_address, shipping_city, shipping_postal_code, shipping_country, created_at)
-         VALUES ($1, $2, 0, 'pending', $3, $4, '00100', 'IT', $5)
+        `INSERT INTO orders (user_id, order_number, billing_name, billing_email, billing_address, billing_city, billing_postal_code, billing_country, subtotal_amount, total_amount, status, payment_status, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 'Italia', 0, 0, $8, 'pending', $9)
          RETURNING id`,
         [
           userId,
-          status,
+          orderNumber,
+          randomUser.name || 'Test User',
+          randomUser.email,
           `Via ${randomUser.company || 'Test'} ${Math.floor(Math.random() * 200)}`,
           randomUser.company ? randomUser.company.split(' ')[0] : 'Milano',
+          '00100',
+          status,
           orderDate
         ]
       );
@@ -265,12 +269,11 @@ async function seedEnhancedDemoData() {
       ];
 
       await client.query(
-        `INSERT INTO contacts (name, email, phone, company, type, message, status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        `INSERT INTO contacts (name, email, company, user_type, message, status)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           randomUser.name,
           randomUser.email,
-          `+39 ${Math.floor(Math.random() * 900000000) + 100000000}`,
           randomUser.company || null,
           type,
           messages[Math.floor(Math.random() * messages.length)],
@@ -300,9 +303,9 @@ async function seedEnhancedDemoData() {
 
       await client.query(
         `INSERT INTO specialist_profiles (
-          user_id, certification_status, exam_score, certification_date, expiry_date, bio
-        ) VALUES ($1, 'certified', $2, NOW() - INTERVAL '6 months', NOW() + INTERVAL '2.5 years', $3)
-        ON CONFLICT (user_id) DO UPDATE SET certification_status = 'certified'`,
+          user_id, status, exam_score, exam_passed, exam_passed_at, bio
+        ) VALUES ($1, 'active', $2, true, NOW() - INTERVAL '6 months', $3)
+        ON CONFLICT (user_id) DO UPDATE SET status = 'active', exam_passed = true`,
         [
           userId,
           examScore,
@@ -316,14 +319,21 @@ async function seedEnhancedDemoData() {
         const activityType = activities[Math.floor(Math.random() * activities.length)];
         const hours = Math.floor(Math.random() * 20) + 4;
 
+        // Get specialist_profile_id
+        const profileResult = await client.query('SELECT id FROM specialist_profiles WHERE user_id = $1', [userId]);
+        const specialistProfileId = profileResult.rows[0].id;
+
         await client.query(
           `INSERT INTO specialist_cpe_records (
-            specialist_id, activity_type, activity_date, hours, description, provider
-          ) VALUES ($1, $2, NOW() - INTERVAL '${Math.floor(Math.random() * 180)} days', $3, $4, $5)`,
+            specialist_profile_id, user_id, activity_type, title, activity_date, hours, credits, description, provider
+          ) VALUES ($1, $2, $3, $4, NOW() - INTERVAL '${Math.floor(Math.random() * 180)} days', $5, $6, $7, $8)`,
           [
+            specialistProfileId,
             userId,
-            activityType,
+            activityType.toLowerCase(),
+            `${activityType} on Cybersecurity`,
             hours,
+            hours * 0.5, // credits = hours * 0.5
             `Partecipazione a ${activityType.toLowerCase()} su tematiche di cybersecurity`,
             'CertiCredia Italia'
           ]
@@ -413,14 +423,13 @@ async function seedEnhancedDemoData() {
     for (const template of templates) {
       const result = await client.query(
         `INSERT INTO assessment_templates (
-          name, type, template_data, description, version, is_active, created_by
-        ) VALUES ($1, $2, $3, $4, '1.0', true, $5)
+          name, description, structure, version, active, status, created_by
+        ) VALUES ($1, $2, $3, '1.0', true, 'active', $4)
         RETURNING id`,
         [
           template.name,
-          template.type,
-          JSON.stringify(template.templateData),
           template.description,
+          JSON.stringify(template.templateData),
           userIds['admin@certicredia.it']
         ]
       );
@@ -447,15 +456,14 @@ async function seedEnhancedDemoData() {
 
       const result = await client.query(
         `INSERT INTO assessments (
-          organization_id, template_id, status, assigned_to, responses, created_by
-        ) VALUES ($1, $2, $3, $4, '{}', $5)
+          organization_id, template_id, status, assigned_specialist_id, responses
+        ) VALUES ($1, $2, $3, $4, '{}')
         RETURNING id`,
         [
           orgId,
           template.id,
           status,
-          status !== 'draft' ? userIds[randomSpecialist] : null,
-          userIds['admin@certicredia.it']
+          status !== 'draft' ? userIds[randomSpecialist] : null
         ]
       );
 

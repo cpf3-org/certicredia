@@ -234,7 +234,7 @@
 
   <!-- Profile Page Script -->
   <script>
-    const API_BASE = window.location.origin + '/api';
+    // API_BASE is defined in dashboard-common.js
 
     // Load user profile
     async function loadProfile() {
@@ -313,6 +313,7 @@
       localStorage.removeItem('token');
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');
+      localStorage.removeItem('refreshToken');
       window.location.href = '/public/pages/app-landing.html';
     });
 
