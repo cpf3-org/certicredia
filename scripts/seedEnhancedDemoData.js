@@ -269,12 +269,11 @@ async function seedEnhancedDemoData() {
       ];
 
       await client.query(
-        `INSERT INTO contacts (name, email, phone, company, type, message, status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        `INSERT INTO contacts (name, email, company, user_type, message, status)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           randomUser.name,
           randomUser.email,
-          `+39 ${Math.floor(Math.random() * 900000000) + 100000000}`,
           randomUser.company || null,
           type,
           messages[Math.floor(Math.random() * messages.length)],
@@ -424,14 +423,13 @@ async function seedEnhancedDemoData() {
     for (const template of templates) {
       const result = await client.query(
         `INSERT INTO assessment_templates (
-          name, type, template_data, description, version, is_active, created_by
-        ) VALUES ($1, $2, $3, $4, '1.0', true, $5)
+          name, description, structure, version, active, status, created_by
+        ) VALUES ($1, $2, $3, '1.0', true, 'active', $4)
         RETURNING id`,
         [
           template.name,
-          template.type,
-          JSON.stringify(template.templateData),
           template.description,
+          JSON.stringify(template.templateData),
           userIds['admin@certicredia.it']
         ]
       );
@@ -458,15 +456,14 @@ async function seedEnhancedDemoData() {
 
       const result = await client.query(
         `INSERT INTO assessments (
-          organization_id, template_id, status, assigned_to, responses, created_by
-        ) VALUES ($1, $2, $3, $4, '{}', $5)
+          organization_id, template_id, status, assigned_specialist_id, responses
+        ) VALUES ($1, $2, $3, $4, '{}')
         RETURNING id`,
         [
           orgId,
           template.id,
           status,
-          status !== 'draft' ? userIds[randomSpecialist] : null,
-          userIds['admin@certicredia.it']
+          status !== 'draft' ? userIds[randomSpecialist] : null
         ]
       );
 
