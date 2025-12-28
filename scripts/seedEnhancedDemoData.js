@@ -90,26 +90,26 @@ async function seedEnhancedDemoData() {
     console.log('\n🏢 Creating organizations...');
 
     const organizationsData = [
-      { name: 'TechCorp S.p.A.', type: 'corporate', vat: 'IT12345678901', city: 'Milano', adminEmail: 'admin@techcorp.it' },
-      { name: 'Finance Bank Italia', type: 'corporate', vat: 'IT98765432109', city: 'Roma', adminEmail: 'admin@financebank.it' },
-      { name: 'HealthSys Italia', type: 'corporate', vat: 'IT11223344556', city: 'Torino', adminEmail: 'admin@healthsys.it' },
-      { name: 'Retail Group SpA', type: 'corporate', vat: 'IT66778899001', city: 'Bologna', adminEmail: 'admin@retailgroup.it' },
-      { name: 'Energy Plus SRL', type: 'corporate', vat: 'IT55443322110', city: 'Napoli', adminEmail: 'admin@energyplus.it' },
+      { name: 'TechCorp S.p.A.', type: 'PRIVATE_COMPANY', vat: 'IT12345678901', city: 'Milano', adminEmail: 'admin@techcorp.it' },
+      { name: 'Finance Bank Italia', type: 'PRIVATE_COMPANY', vat: 'IT98765432109', city: 'Roma', adminEmail: 'admin@financebank.it' },
+      { name: 'HealthSys Italia', type: 'PRIVATE_COMPANY', vat: 'IT11223344556', city: 'Torino', adminEmail: 'admin@healthsys.it' },
+      { name: 'Retail Group SpA', type: 'PRIVATE_COMPANY', vat: 'IT66778899001', city: 'Bologna', adminEmail: 'admin@retailgroup.it' },
+      { name: 'Energy Plus SRL', type: 'PRIVATE_COMPANY', vat: 'IT55443322110', city: 'Napoli', adminEmail: 'admin@energyplus.it' },
       { name: 'Ministero della Difesa', type: 'government', vat: 'IT00000000001', city: 'Roma', adminEmail: 'admin@techcorp.it' },
       { name: 'Regione Lombardia', type: 'government', vat: 'IT11111111112', city: 'Milano', adminEmail: 'admin@techcorp.it' },
       { name: 'Università di Bologna', type: 'non_profit', vat: 'IT22222222223', city: 'Bologna', adminEmail: 'admin@techcorp.it' },
       { name: 'Croce Rossa Italiana', type: 'non_profit', vat: 'IT33333333334', city: 'Roma', adminEmail: 'admin@techcorp.it' },
-      { name: 'StartupInnovation SRL', type: 'corporate', vat: 'IT44444444445', city: 'Milano', adminEmail: 'admin@techcorp.it' },
-      { name: 'CloudService SRL', type: 'corporate', vat: 'IT55555555556', city: 'Firenze', adminEmail: 'admin@techcorp.it' },
-      { name: 'DataTech Italia', type: 'corporate', vat: 'IT66666666667', city: 'Genova', adminEmail: 'admin@techcorp.it' },
-      { name: 'SecurityFirst SpA', type: 'corporate', vat: 'IT77777777778', city: 'Venezia', adminEmail: 'admin@techcorp.it' },
-      { name: 'NetworkSolutions', type: 'corporate', vat: 'IT88888888889', city: 'Palermo', adminEmail: 'admin@techcorp.it' },
-      { name: 'AI Innovations SRL', type: 'corporate', vat: 'IT99999999990', city: 'Bari', adminEmail: 'admin@techcorp.it' },
-      { name: 'BlockChain Italia', type: 'corporate', vat: 'IT10101010101', city: 'Catania', adminEmail: 'admin@techcorp.it' },
-      { name: 'IoT Systems SpA', type: 'corporate', vat: 'IT20202020202', city: 'Verona', adminEmail: 'admin@techcorp.it' },
-      { name: 'Digital Marketing SRL', type: 'corporate', vat: 'IT30303030303', city: 'Padova', adminEmail: 'admin@techcorp.it' },
-      { name: 'FinTech Innovators', type: 'corporate', vat: 'IT40404040404', city: 'Trieste', adminEmail: 'admin@techcorp.it' },
-      { name: 'PharmaTech Italia', type: 'corporate', vat: 'IT50505050505', city: 'Parma', adminEmail: 'admin@techcorp.it' }
+      { name: 'StartupInnovation SRL', type: 'PRIVATE_COMPANY', vat: 'IT44444444445', city: 'Milano', adminEmail: 'admin@techcorp.it' },
+      { name: 'CloudService SRL', type: 'PRIVATE_COMPANY', vat: 'IT55555555556', city: 'Firenze', adminEmail: 'admin@techcorp.it' },
+      { name: 'DataTech Italia', type: 'PRIVATE_COMPANY', vat: 'IT66666666667', city: 'Genova', adminEmail: 'admin@techcorp.it' },
+      { name: 'SecurityFirst SpA', type: 'PRIVATE_COMPANY', vat: 'IT77777777778', city: 'Venezia', adminEmail: 'admin@techcorp.it' },
+      { name: 'NetworkSolutions', type: 'PRIVATE_COMPANY', vat: 'IT88888888889', city: 'Palermo', adminEmail: 'admin@techcorp.it' },
+      { name: 'AI Innovations SRL', type: 'PRIVATE_COMPANY', vat: 'IT99999999990', city: 'Bari', adminEmail: 'admin@techcorp.it' },
+      { name: 'BlockChain Italia', type: 'PRIVATE_COMPANY', vat: 'IT10101010101', city: 'Catania', adminEmail: 'admin@techcorp.it' },
+      { name: 'IoT Systems SpA', type: 'PRIVATE_COMPANY', vat: 'IT20202020202', city: 'Verona', adminEmail: 'admin@techcorp.it' },
+      { name: 'Digital Marketing SRL', type: 'PRIVATE_COMPANY', vat: 'IT30303030303', city: 'Padova', adminEmail: 'admin@techcorp.it' },
+      { name: 'FinTech Innovators', type: 'PRIVATE_COMPANY', vat: 'IT40404040404', city: 'Trieste', adminEmail: 'admin@techcorp.it' },
+      { name: 'PharmaTech Italia', type: 'PRIVATE_COMPANY', vat: 'IT50505050505', city: 'Parma', adminEmail: 'admin@techcorp.it' }
     ];
 
     const orgIds = {};
