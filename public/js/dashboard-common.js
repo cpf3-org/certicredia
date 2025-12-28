@@ -44,7 +44,7 @@ function logout() {
   });
 
   // Redirect to login
-  window.location.href = '/public/pages/login.html';
+  window.location.href = '/public/pages/app-landing.html';
 }
 
 /**

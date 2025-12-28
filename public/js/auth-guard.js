@@ -17,7 +17,7 @@
     // Percorsi pubblici (non richiedono autenticazione)
     publicPaths: [
       '/public/pages/app-landing.html',
-      '/public/pages/login.html',
+      '/public/pages/app-landing.html',
       '/public/pages/register.html',
       '/public/pages/forgot-password.html'
     ],
@@ -75,7 +75,7 @@
     redirectToLogin() {
       const currentPath = this.getCurrentPath();
       const returnUrl = encodeURIComponent(currentPath);
-      window.location.href = `/public/pages/login.html?returnUrl=${returnUrl}`;
+      window.location.href = `/public/pages/app-landing.html?returnUrl=${returnUrl}`;
     },
 
     /**
@@ -125,7 +125,7 @@
             </svg>
             <h1 style="font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">Accesso Negato</h1>
             <p style="color: #6b7280; margin-bottom: 1.5rem;">Non hai i permessi per accedere a questa pagina.</p>
-            <a href="/public/pages/login.html" style="display: inline-block; background: #0891b2; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">
+            <a href="/public/pages/app-landing.html" style="display: inline-block; background: #0891b2; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">
               Vai al Login
             </a>
           </div>
