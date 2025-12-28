@@ -193,15 +193,20 @@ async function seedEnhancedDemoData() {
       const orderDate = new Date();
       orderDate.setDate(orderDate.getDate() - daysAgo);
 
+      const orderNumber = `ORD-${Date.now()}-${i}`;
       const orderResult = await client.query(
-        `INSERT INTO orders (user_id, status, total_amount, payment_status, shipping_address, shipping_city, shipping_postal_code, shipping_country, created_at)
-         VALUES ($1, $2, 0, 'pending', $3, $4, '00100', 'IT', $5)
+        `INSERT INTO orders (user_id, order_number, billing_name, billing_email, billing_address, billing_city, billing_postal_code, billing_country, subtotal_amount, total_amount, status, payment_status, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 'Italia', 0, 0, $8, 'pending', $9)
          RETURNING id`,
         [
           userId,
-          status,
+          orderNumber,
+          randomUser.name || 'Test User',
+          randomUser.email,
           `Via ${randomUser.company || 'Test'} ${Math.floor(Math.random() * 200)}`,
           randomUser.company ? randomUser.company.split(' ')[0] : 'Milano',
+          '00100',
+          status,
           orderDate
         ]
       );
