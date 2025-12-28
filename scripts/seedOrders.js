@@ -61,8 +61,8 @@ async function seedOrders() {
     const users = usersResult.rows;
     const products = productsResult.rows;
 
-    const orderStatuses = ['pending', 'processing', 'completed', 'cancelled'];
-    const paymentStatuses = ['pending', 'completed', 'failed'];
+    const orderStatuses = ['pending', 'confirmed', 'processing', 'completed', 'cancelled'];
+    const paymentStatuses = ['pending', 'paid', 'failed', 'refunded'];
     const paymentMethods = ['bank_transfer', 'credit_card', 'paypal'];
 
     let totalOrders = 0;
@@ -104,7 +104,7 @@ async function seedOrders() {
           // Random status and payment info
           const status = orderStatuses[Math.floor(Math.random() * orderStatuses.length)];
           const paymentStatus = status === 'completed'
-            ? 'completed'
+            ? 'paid'
             : paymentStatuses[Math.floor(Math.random() * paymentStatuses.length)];
           const paymentMethod = paymentMethods[Math.floor(Math.random() * paymentMethods.length)];
 
@@ -146,7 +146,7 @@ async function seedOrders() {
           for (const product of orderProducts) {
             await client.query(
               `INSERT INTO order_items (
-                order_id, product_id, product_name, product_description,
+                order_id, product_id, product_name, product_slug,
                 quantity, unit_price, total_price
               )
               VALUES ($1, $2, $3, $4, $5, $6, $7)`,
@@ -154,7 +154,7 @@ async function seedOrders() {
                 order.id,
                 product.id,
                 product.name,
-                `Descrizione: ${product.name}`,
+                product.name.toLowerCase().replace(/\s+/g, '-'),
                 product.quantity,
                 product.price,
                 parseFloat(product.price) * product.quantity

@@ -91,7 +91,7 @@ export const createOrder = async (req, res) => {
     for (const item of cartResult.rows) {
       await client.query(
         `INSERT INTO order_items (
-          order_id, product_id, product_name, product_description,
+          order_id, product_id, product_name, product_slug,
           quantity, unit_price, total_price
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
