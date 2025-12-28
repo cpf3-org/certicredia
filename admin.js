@@ -787,7 +787,7 @@ async function loadOrganizations() {
         const data = await response.json();
 
         if (data.success) {
-            allOrganizations = data.data;
+            allOrganizations = data.data.organizations || data.data || [];
             displayOrganizations(allOrganizations);
         } else {
             notify(data.message || 'Errore caricamento organizzazioni', 'error');
@@ -1001,7 +1001,7 @@ async function loadSpecialists() {
         const data = await response.json();
 
         if (data.success) {
-            allSpecialists = data.data;
+            allSpecialists = data.data.specialists || data.data || [];
             displaySpecialists(allSpecialists);
         } else {
             notify(data.message || 'Errore caricamento specialist', 'error');
