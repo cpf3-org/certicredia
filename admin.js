@@ -69,9 +69,14 @@ async function logout() {
         console.error('Logout error:', error);
     }
 
+    // Clear all possible token/user storage keys
     localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
     localStorage.removeItem('user');
-    window.location.href = '/';
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('refreshToken');
+
+    window.location.href = '/public/pages/app-landing.html';
 }
 
 // Dashboard
@@ -761,12 +766,19 @@ function getContactStatusTextColor(status) {
     return colors[status] || 'text-slate-400';
 }
 
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('it-IT', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
+
 // ========== ORGANIZATIONS MANAGEMENT ==========
 
 let allOrganizations = [];
 
 async function loadOrganizations() {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE}/api/organizations`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -886,6 +898,7 @@ async function deleteOrganization(id) {
     if (!confirm('Sei sicuro di voler eliminare questa organizzazione?')) return;
 
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE}/api/organizations/${id}`, {
             method: 'DELETE',
             headers: {
@@ -926,6 +939,7 @@ async function saveOrganization(event) {
     };
 
     try {
+        const token = localStorage.getItem('token');
         const url = id ? `${API_BASE}/api/organizations/${id}` : `${API_BASE}/api/organizations`;
         const method = id ? 'PUT' : 'POST';
 
@@ -978,6 +992,7 @@ let allSpecialists = [];
 
 async function loadSpecialists() {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE}/api/specialists`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1092,6 +1107,7 @@ async function deleteSpecialist(id) {
     if (!confirm('Sei sicuro di voler eliminare questo specialist?')) return;
 
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE}/api/specialists/${id}`, {
             method: 'DELETE',
             headers: {
@@ -1128,6 +1144,7 @@ async function saveSpecialist(event) {
     };
 
     try {
+        const token = localStorage.getItem('token');
         const url = id ? `${API_BASE}/api/specialists/${id}` : `${API_BASE}/api/specialists`;
         const method = id ? 'PUT' : 'POST';
 

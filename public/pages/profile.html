@@ -2,7 +2,6 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <!-- CRITICAL: Auth check BEFORE any rendering -->
   <script src="/public/js/inline-auth-check.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Il Mio Profilo - CertiCredia</title>
@@ -12,18 +11,28 @@
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white min-h-screen">
   <!-- Navigation -->
-  <nav class="bg-white shadow-sm">
+  <nav class="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center">
-          <span class="text-xl font-bold text-cyan-600">CertiCredia</span>
-          <span class="ml-3 text-gray-600">Il Mio Profilo</span>
+          <span class="text-xl font-bold text-cyan-400">CertiCredia</span>
+          <span class="ml-3 text-slate-300">Il Mio Profilo</span>
         </div>
         <div class="flex items-center space-x-4">
-          <button id="backBtn" class="text-sm text-gray-600 hover:text-gray-800">← Torna alla Dashboard</button>
-          <button id="logoutBtn" class="text-sm text-red-600 hover:text-red-800">Logout</button>
+          <button id="backBtn" class="text-sm text-slate-400 hover:text-slate-200 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Torna alla Dashboard
+          </button>
+          <button id="logoutBtn" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 border border-red-500/30">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Logout
+          </button>
         </div>
       </div>
     </div>
@@ -32,125 +41,129 @@
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Il Mio Profilo</h1>
-      <p class="mt-2 text-gray-600">Gestisci le tue informazioni personali</p>
+      <h1 class="text-3xl font-bold">Il Mio Profilo</h1>
+      <p class="mt-2 text-slate-400">Gestisci le tue informazioni personali</p>
     </div>
 
     <!-- Success/Error Messages -->
     <div id="messageContainer" class="mb-6 hidden"></div>
 
     <!-- Profile Form -->
-    <div class="bg-white rounded-lg shadow">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-900">Informazioni Account</h2>
+    <div class="bg-slate-800 rounded-lg shadow-lg border border-slate-700">
+      <div class="px-6 py-4 border-b border-slate-700">
+        <h2 class="text-lg font-semibold">Informazioni Account</h2>
       </div>
 
       <form id="profileForm" class="p-6 space-y-6">
-        <!-- Name -->
-        <div>
-          <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nome Completo *</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-          >
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Name -->
+          <div>
+            <label for="name" class="block text-sm font-medium text-slate-400 mb-2">Nome Completo *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+            >
+          </div>
 
-        <!-- Email (read-only) -->
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            readonly
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-          >
-          <p class="mt-1 text-xs text-gray-500">L'email non può essere modificata</p>
-        </div>
+          <!-- Email (read-only) -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-slate-400 mb-2">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              readonly
+              class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-slate-400 cursor-not-allowed"
+            >
+            <p class="mt-1 text-xs text-slate-500">L'email non può essere modificata</p>
+          </div>
 
-        <!-- Company -->
-        <div>
-          <label for="company" class="block text-sm font-medium text-gray-700 mb-2">Azienda/Organizzazione</label>
-          <input
-            type="text"
-            id="company"
-            name="company"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-          >
-        </div>
+          <!-- Company -->
+          <div>
+            <label for="company" class="block text-sm font-medium text-slate-400 mb-2">Azienda/Organizzazione</label>
+            <input
+              type="text"
+              id="company"
+              name="company"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+            >
+          </div>
 
-        <!-- Phone -->
-        <div>
-          <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Telefono</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-          >
+          <!-- Phone -->
+          <div>
+            <label for="phone" class="block text-sm font-medium text-slate-400 mb-2">Telefono</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+            >
+          </div>
         </div>
 
         <!-- Address -->
         <div>
-          <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Indirizzo</label>
+          <label for="address" class="block text-sm font-medium text-slate-400 mb-2">Indirizzo</label>
           <textarea
             id="address"
             name="address"
-            rows="3"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            rows="2"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
           ></textarea>
         </div>
 
-        <!-- City and Postal Code -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- City -->
           <div>
-            <label for="city" class="block text-sm font-medium text-gray-700 mb-2">Città</label>
+            <label for="city" class="block text-sm font-medium text-slate-400 mb-2">Città</label>
             <input
               type="text"
               id="city"
               name="city"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
             >
           </div>
+
+          <!-- Postal Code -->
           <div>
-            <label for="postal_code" class="block text-sm font-medium text-gray-700 mb-2">CAP</label>
+            <label for="postal_code" class="block text-sm font-medium text-slate-400 mb-2">CAP</label>
             <input
               type="text"
               id="postal_code"
               name="postal_code"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+            >
+          </div>
+
+          <!-- Country -->
+          <div>
+            <label for="country" class="block text-sm font-medium text-slate-400 mb-2">Paese</label>
+            <input
+              type="text"
+              id="country"
+              name="country"
+              value="Italia"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
             >
           </div>
         </div>
 
-        <!-- Country -->
-        <div>
-          <label for="country" class="block text-sm font-medium text-gray-700 mb-2">Paese</label>
-          <input
-            type="text"
-            id="country"
-            name="country"
-            value="Italia"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-          >
-        </div>
-
         <!-- Submit Button -->
-        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <div class="flex justify-end space-x-3 pt-4 border-t border-slate-700">
           <button
             type="button"
             id="cancelBtn"
-            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            class="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
           >
             Annulla
           </button>
           <button
             type="submit"
             id="saveBtn"
-            class="px-6 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700"
+            class="px-6 py-2 bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-bold rounded-lg transition-colors"
           >
             Salva Modifiche
           </button>
@@ -159,55 +172,55 @@
     </div>
 
     <!-- Change Password Section -->
-    <div class="mt-8 bg-white rounded-lg shadow">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-900">Cambia Password</h2>
+    <div class="mt-8 bg-slate-800 rounded-lg shadow-lg border border-slate-700">
+      <div class="px-6 py-4 border-b border-slate-700">
+        <h2 class="text-lg font-semibold">Cambia Password</h2>
       </div>
 
       <form id="passwordForm" class="p-6 space-y-6">
         <!-- Current Password -->
         <div>
-          <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-2">Password Attuale *</label>
+          <label for="currentPassword" class="block text-sm font-medium text-slate-400 mb-2">Password Attuale *</label>
           <input
             type="password"
             id="currentPassword"
             name="currentPassword"
             required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
           >
         </div>
 
         <!-- New Password -->
         <div>
-          <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-2">Nuova Password *</label>
+          <label for="newPassword" class="block text-sm font-medium text-slate-400 mb-2">Nuova Password *</label>
           <input
             type="password"
             id="newPassword"
             name="newPassword"
             required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
           >
-          <p class="mt-1 text-xs text-gray-500">Minimo 12 caratteri, con lettere maiuscole, minuscole, numeri e caratteri speciali</p>
+          <p class="mt-1 text-xs text-slate-500">Minimo 12 caratteri, con lettere maiuscole, minuscole, numeri e caratteri speciali</p>
         </div>
 
         <!-- Confirm New Password -->
         <div>
-          <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">Conferma Nuova Password *</label>
+          <label for="confirmPassword" class="block text-sm font-medium text-slate-400 mb-2">Conferma Nuova Password *</label>
           <input
             type="password"
             id="confirmPassword"
             name="confirmPassword"
             required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
           >
         </div>
 
         <!-- Submit Button -->
-        <div class="flex justify-end pt-4 border-t border-gray-200">
+        <div class="flex justify-end pt-4 border-t border-slate-700">
           <button
             type="submit"
             id="changePasswordBtn"
-            class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+            class="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-lg transition-colors"
           >
             Cambia Password
           </button>
@@ -225,24 +238,36 @@
 
     // Load user profile
     async function loadProfile() {
-      const user = getCurrentUser();
-      if (!user) return;
+      try {
+        const user = getCurrentUser();
+        if (!user) {
+          console.error('No user found');
+          return;
+        }
 
-      // Populate form with user data
-      document.getElementById('name').value = user.name || '';
-      document.getElementById('email').value = user.email || '';
-      document.getElementById('company').value = user.company || '';
-      document.getElementById('phone').value = user.phone || '';
-      document.getElementById('address').value = user.address || '';
-      document.getElementById('city').value = user.city || '';
-      document.getElementById('postal_code').value = user.postal_code || '';
-      document.getElementById('country').value = user.country || 'Italia';
+        // Populate form with user data
+        document.getElementById('name').value = user.name || (user.first_name && user.last_name ? user.first_name + ' ' + user.last_name : '');
+        document.getElementById('email').value = user.email || '';
+        document.getElementById('company').value = user.company || '';
+        document.getElementById('phone').value = user.phone || '';
+        document.getElementById('address').value = user.address || '';
+        document.getElementById('city').value = user.city || '';
+        document.getElementById('postal_code').value = user.postal_code || '';
+        document.getElementById('country').value = user.country || 'Italia';
+
+        console.log('Profile loaded successfully');
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        showMessage('Errore caricamento profilo: ' + error.message, 'error');
+      }
     }
 
     // Show message
     function showMessage(message, type) {
       const container = document.getElementById('messageContainer');
-      const bgColor = type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800';
+      const bgColor = type === 'success'
+        ? 'bg-green-500/10 border-green-500/50 text-green-400'
+        : 'bg-red-500/10 border-red-500/50 text-red-400';
 
       container.innerHTML = `
         <div class="${bgColor} border rounded-lg p-4">
@@ -264,19 +289,31 @@
         // Redirect based on role
         switch (user.role) {
           case 'admin':
-            window.location.href = '/public/pages/admin/index.html';
+            window.location.href = '/admin.html';
             break;
           case 'specialist':
             window.location.href = '/public/pages/specialist/dashboard.html';
             break;
+          case 'organization':
           case 'organization_admin':
           case 'organization_operator':
             window.location.href = '/public/pages/ente/dashboard.html';
             break;
           default:
-            window.location.href = '/public/app.html';
+            window.location.href = '/public/pages/app-landing.html';
         }
+      } else {
+        window.location.href = '/public/pages/app-landing.html';
       }
+    });
+
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('token');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('user');
+      window.location.href = '/public/pages/app-landing.html';
     });
 
     // Cancel button
@@ -303,22 +340,33 @@
           country: document.getElementById('country').value
         };
 
-        const data = await apiRequest('/auth/profile', {
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/auth/profile`, {
           method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify(formData)
         });
+
+        const data = await response.json();
 
         if (data && data.success) {
           // Update localStorage with new user data
           const currentUser = getCurrentUser();
           const updatedUser = { ...currentUser, ...formData };
+          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
           localStorage.setItem('user', JSON.stringify(updatedUser));
 
           showMessage('Profilo aggiornato con successo!', 'success');
+        } else {
+          throw new Error(data.message || 'Errore durante l\'aggiornamento');
         }
 
       } catch (error) {
-        showMessage('Errore durante il salvataggio: ' + error.message, 'error');
+        console.error('Profile update error:', error);
+        showMessage('Errore: ' + error.message, 'error');
       } finally {
         saveBtn.disabled = false;
         saveBtn.textContent = 'Salva Modifiche';
@@ -350,20 +398,30 @@
       changePasswordBtn.textContent = 'Modifica in corso...';
 
       try {
-        const data = await apiRequest('/auth/password', {
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/auth/password`, {
           method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             currentPassword,
             newPassword
           })
         });
 
+        const data = await response.json();
+
         if (data && data.success) {
           showMessage('Password modificata con successo!', 'success');
           document.getElementById('passwordForm').reset();
+        } else {
+          throw new Error(data.message || 'Errore durante la modifica password');
         }
 
       } catch (error) {
+        console.error('Password change error:', error);
         showMessage('Errore: ' + error.message, 'error');
       } finally {
         changePasswordBtn.disabled = false;
