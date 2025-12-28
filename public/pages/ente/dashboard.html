@@ -282,8 +282,9 @@
     // Load organization data
     async function loadOrganizationData() {
       try {
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
         console.log('🔍 Loading organization data...');
+        console.log('🔑 Token:', token ? 'presente' : 'ASSENTE!');
 
         const response = await fetch(`${API_BASE}/organizations/me`, {
           headers: {
