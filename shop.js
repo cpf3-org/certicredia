@@ -48,7 +48,7 @@ function updateAuthUI() {
     if (!target) return;
     target.innerHTML = getToken() && state.user ?
         `<a href="/dashboard.html" class="text-slate-300 hover:text-white">${state.user.name}</a><button onclick="handleLogout()" class="text-red-400">Logout</button>` :
-        `<a href="/auth.html" class="btn-outline">Accedi</a>`;
+        `<a href="/public/pages/app-landing.html" class="btn-outline">Accedi</a>`;
 }
 
 async function initShop() {
