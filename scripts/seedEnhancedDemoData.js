@@ -422,16 +422,26 @@ async function seedEnhancedDemoData() {
     ];
 
     const templateIds = [];
-    for (const template of templates) {
+    for (let i = 0; i < templates.length; i++) {
+      const template = templates[i];
+      const version = `1.${i}`;
       const result = await client.query(
         `INSERT INTO assessment_templates (
           name, description, structure, version, active, status, created_by
-        ) VALUES ($1, $2, $3, '1.0', true, 'active', $4)
+        ) VALUES ($1, $2, $3, $4, true, 'active', $5)
+        ON CONFLICT (version) DO UPDATE SET
+          name = EXCLUDED.name,
+          description = EXCLUDED.description,
+          structure = EXCLUDED.structure,
+          active = EXCLUDED.active,
+          status = EXCLUDED.status,
+          updated_at = CURRENT_TIMESTAMP
         RETURNING id`,
         [
           template.name,
           template.description,
           JSON.stringify(template.templateData),
+          version,
           userIds['admin@certicredia.it']
         ]
       );
