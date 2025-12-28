@@ -252,8 +252,11 @@
     async function loadProfile() {
       try {
         const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        console.log('🔍 Loading user profile...');
+        console.log('🔑 Token:', token ? 'presente' : 'assente');
+
         if (!token) {
-          console.error('No token found');
+          console.error('❌ No token found');
           window.location.href = '/public/pages/app-landing.html';
           return;
         }
@@ -265,28 +268,60 @@
           }
         });
 
+        console.log('📡 Response status:', response.status);
         const result = await response.json();
+        console.log('📦 Response data:', result);
 
         if (!result.success) {
           throw new Error(result.message || 'Errore caricamento profilo');
         }
 
         const user = result.data;
+        console.log('👤 User data:', user);
 
         // Populate form with user data
-        document.getElementById('name').value = user.name || '';
-        document.getElementById('email').value = user.email || '';
-        document.getElementById('company').value = user.company || '';
-        document.getElementById('vat_number').value = user.vat_number || '';
-        document.getElementById('phone').value = user.phone || '';
-        document.getElementById('address').value = user.address || '';
-        document.getElementById('city').value = user.city || '';
-        document.getElementById('postal_code').value = user.postal_code || '';
-        document.getElementById('country').value = user.country || 'Italia';
+        const fields = {
+          name: user.name || '',
+          email: user.email || '',
+          company: user.company || '',
+          vat_number: user.vat_number || '',
+          phone: user.phone || '',
+          address: user.address || '',
+          city: user.city || '',
+          postal_code: user.postal_code || '',
+          country: user.country || 'Italia'
+        };
 
-        console.log('Profile loaded successfully');
+        console.log('📝 Populating fields:', fields);
+
+        document.getElementById('name').value = fields.name;
+        document.getElementById('email').value = fields.email;
+        document.getElementById('company').value = fields.company;
+        document.getElementById('vat_number').value = fields.vat_number;
+        document.getElementById('phone').value = fields.phone;
+        document.getElementById('address').value = fields.address;
+        document.getElementById('city').value = fields.city;
+        document.getElementById('postal_code').value = fields.postal_code;
+        document.getElementById('country').value = fields.country;
+
+        console.log('✅ Profile loaded successfully');
+
+        // Verify fields were populated
+        const verification = {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          company: document.getElementById('company').value,
+          vat_number: document.getElementById('vat_number').value,
+          phone: document.getElementById('phone').value,
+          address: document.getElementById('address').value,
+          city: document.getElementById('city').value,
+          postal_code: document.getElementById('postal_code').value,
+          country: document.getElementById('country').value
+        };
+        console.log('✔️ Verified fields in DOM:', verification);
+
       } catch (error) {
-        console.error('Error loading profile:', error);
+        console.error('💥 Error loading profile:', error);
         showMessage('Errore caricamento profilo: ' + error.message, 'error');
       }
     }
