@@ -29,7 +29,31 @@ let currentOrgLanguage = 'en-US'; // Current organization language
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
     loadAllData();
+    handleHashNavigation();
 });
+
+// Handle hash-based navigation (e.g., #organization/123)
+function handleHashNavigation() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#organization/')) {
+        const orgId = parseInt(hash.replace('#organization/', ''));
+        if (orgId && !isNaN(orgId)) {
+            // Hide sidebar when coming from direct link
+            const sidebar = document.getElementById('sidebar');
+            const dashboardMain = document.getElementById('dashboardMain');
+            if (sidebar) {
+                sidebar.classList.add('sidebar-hidden');
+            }
+            if (dashboardMain) {
+                dashboardMain.classList.add('sidebar-collapsed');
+            }
+            // Load the organization once data is ready
+            setTimeout(() => {
+                loadOrganizationDetails(orgId);
+            }, 500);
+        }
+    }
+}
 
 // Modal stack management
 // Note: pushModal() and popModal() are now in shared/ui-utils.js
