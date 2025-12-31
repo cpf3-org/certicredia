@@ -41,13 +41,15 @@ function transformAssessmentData(dbAssessment) {
       categoryStats[category] = {
         total: 0,
         assessed: 0,
-        totalRisk: 0
+        totalRisk: 0,
+        values: []
       };
     }
     categoryStats[category].total++;
     if (value > 0) {
       categoryStats[category].assessed++;
       categoryStats[category].totalRisk += bayesianScore;
+      categoryStats[category].values.push(bayesianScore);
     }
   }
 
@@ -55,6 +57,8 @@ function transformAssessmentData(dbAssessment) {
   const byCategory = {};
   let totalAssessed = 0;
   let totalIndicators = Object.keys(assessmentData).length;
+  let totalRiskScore = 0;
+  let greenDomains = 0, yellowDomains = 0, redDomains = 0;
 
   for (const [cat, stats] of Object.entries(categoryStats)) {
     const avgRisk = stats.assessed > 0 ? stats.totalRisk / stats.assessed : 0;
@@ -68,9 +72,88 @@ function transformAssessmentData(dbAssessment) {
     };
 
     totalAssessed += stats.assessed;
+    totalRiskScore += stats.totalRisk;
+
+    // Count domain colors
+    if (avgRisk <= 0.33) greenDomains++;
+    else if (avgRisk <= 0.66) yellowDomains++;
+    else redDomains++;
   }
 
   const completionPercentage = totalIndicators > 0 ? (totalAssessed / totalIndicators) * 100 : 0;
+  const avgRisk = totalAssessed > 0 ? totalRiskScore / totalAssessed : 0;
+
+  // CPF Score: inverse of average risk (0-100 scale)
+  const cpfScore = Math.round((1 - avgRisk) * 100);
+
+  // Maturity Level (0-5 based on CPF score)
+  let maturityLevel = 0;
+  let levelName = 'Unaware';
+  if (cpfScore >= 90) { maturityLevel = 5; levelName = 'Optimizing'; }
+  else if (cpfScore >= 75) { maturityLevel = 4; levelName = 'Managed'; }
+  else if (cpfScore >= 60) { maturityLevel = 3; levelName = 'Defined'; }
+  else if (cpfScore >= 40) { maturityLevel = 2; levelName = 'Developing'; }
+  else if (cpfScore >= 20) { maturityLevel = 1; levelName = 'Initial'; }
+
+  // Convergence Index: measure of compounding risks
+  const convergenceIndex = redDomains * 2 + yellowDomains * 0.5;
+
+  // Sector Benchmark (simulated)
+  const sectorAverage = 65; // Industry average
+  const percentile = Math.min(99, Math.max(1, Math.round((cpfScore / 100) * 100)));
+  const gap = cpfScore - sectorAverage;
+
+  // Compliance status based on CPF score
+  const complianceStatus = cpfScore >= 75 ? 'compliant' :
+                          cpfScore >= 60 ? 'at_risk' : 'non_compliant';
+
+  // Maturity Model object
+  const maturityModel = {
+    maturity_level: maturityLevel,
+    level_name: levelName,
+    cpf_score: cpfScore,
+    convergence_index: convergenceIndex,
+    green_domains_count: greenDomains,
+    yellow_domains_count: yellowDomains,
+    red_domains_count: redDomains,
+    sector_benchmark: {
+      percentile: percentile,
+      sector_average: sectorAverage,
+      gap: gap
+    },
+    compliance: {
+      gdpr: {
+        status: complianceStatus,
+        score: cpfScore,
+        gaps: cpfScore < 75 ? ['Security awareness training', 'Incident response procedures'] : []
+      },
+      nis2: {
+        status: complianceStatus,
+        score: cpfScore,
+        gaps: cpfScore < 75 ? ['Risk management', 'Supply chain security'] : []
+      },
+      dora: {
+        status: cpfScore >= 70 ? 'compliant' : cpfScore >= 55 ? 'at_risk' : 'non_compliant',
+        score: cpfScore,
+        gaps: cpfScore < 70 ? ['ICT risk management', 'Digital resilience testing'] : []
+      },
+      iso27001: {
+        status: complianceStatus,
+        score: cpfScore,
+        gaps: cpfScore < 75 ? ['Information security controls', 'Risk assessment'] : []
+      }
+    },
+    certification_path: {
+      current_readiness: cpfScore,
+      recommended_certifications: cpfScore >= 70 ? ['ISO 27001', 'SOC 2'] : ['ISO 27001 Gap Analysis'],
+      estimated_months: cpfScore >= 70 ? 6 : 12
+    },
+    roi_analysis: {
+      risk_reduction: Math.round(cpfScore * 0.8),
+      cost_savings_annual: Math.round(cpfScore * 1000),
+      compliance_value: cpfScore >= 75 ? 'High' : 'Medium'
+    }
+  };
 
   return {
     id: dbAssessment.organization_id,
@@ -83,9 +166,10 @@ function transformAssessmentData(dbAssessment) {
       completion: {
         percentage: completionPercentage,
         assessed_indicators: totalAssessed
-      }
+      },
+      maturity_model: maturityModel
     },
-    metadata: dbAssessment.metadata || {},
+    metadata: dbAssessment.metadata || { language: 'it-IT' },
     created_at: dbAssessment.created_at,
     updated_at: dbAssessment.updated_at
   };
