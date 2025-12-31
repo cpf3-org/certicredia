@@ -40,10 +40,10 @@ async function initializeDashboard() {
             selectedOrgId = orgId;
             await loadOrganizationDetails(orgId);
         } else {
-            showAlert('ID organizzazione non valido nell\'URL', 'error');
+            console.error('Invalid organization ID in URL');
         }
     } else {
-        showAlert('Nessuna organizzazione specificata. Torna al pannello admin e seleziona un\'organizzazione.', 'error');
+        console.warn('No organization specified in URL hash');
     }
 }
 
