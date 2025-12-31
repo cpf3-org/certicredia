@@ -50,6 +50,13 @@ async function setupDatabase() {
   log('\n🔧 CPF Auditing Database Setup', colors.blue);
   log('=' .repeat(50), colors.blue);
 
+  // Skip database/user creation when using DATABASE_URL (cloud databases)
+  if (process.env.DATABASE_URL) {
+    log('\n✓ Using DATABASE_URL - skipping database/user creation', colors.green);
+    log('  (Assuming database and user already exist)', colors.yellow);
+    return;
+  }
+
   // Connect to postgres database (default) to create our database
   // Parse DATABASE_URL if available, otherwise use individual env vars
   let adminConfig;
@@ -115,27 +122,13 @@ async function setupDatabase() {
     await adminClient.end();
 
     // Connect to the target database to grant table-level permissions
-    let dbConfig;
-    if (process.env.DATABASE_URL) {
-      const url = new URL(process.env.DATABASE_URL);
-      dbConfig = {
-        host: url.hostname,
-        port: parseInt(url.port) || 5432,
-        database: url.pathname.slice(1), // Remove leading slash
-        user: url.username,
-        password: url.password,
-        ssl: url.searchParams.get('sslmode') === 'require' ? { rejectUnauthorized: false } : false
-      };
-    } else {
-      dbConfig = {
-        host: DB_HOST,
-        port: DB_PORT,
-        database: DB_NAME,
-        user: process.env.POSTGRES_USER || 'postgres',
-        password: process.env.POSTGRES_PASSWORD || DB_PASSWORD
-      };
-    }
-    const dbClient = new pg.Client(dbConfig);
+    const dbClient = new pg.Client({
+      host: DB_HOST,
+      port: DB_PORT,
+      database: DB_NAME,
+      user: process.env.POSTGRES_USER || 'postgres',
+      password: process.env.POSTGRES_PASSWORD || DB_PASSWORD
+    });
 
     try {
       await dbClient.connect();
