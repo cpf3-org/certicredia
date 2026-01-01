@@ -147,7 +147,7 @@ export async function updateAssessment(organizationId, assessmentData, metadata 
   const query = `UPDATE cpf_auditing_assessments
                  SET assessment_data = $1, metadata = $2, last_assessment_date = CURRENT_TIMESTAMP
                  WHERE organization_id = $3 AND deleted_at IS NULL
-                 RETURNING *`;
+                 RETURNING id, organization_id, assessment_data, metadata, created_at, updated_at, last_assessment_date, deleted_at`;
   const params = [JSON.stringify(assessmentData), JSON.stringify(updatedMetadata), organizationId];
 
   const result = await pool.query(query, params);
