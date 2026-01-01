@@ -1,10 +1,16 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { calculateAggregates } from '../lib/db_json.js';
 
-// Import calculateAggregates from db_json.js (includes maturity model calculation)
-const { calculateAggregates } = require('../lib/db_json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Check if this module is being run directly
+const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
+                     process.argv[1].endsWith(path.basename(__filename));
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const ORGS_DIR = path.join(DATA_DIR, 'organizations');
@@ -451,7 +457,7 @@ function writeJsonFile(filePath, data) { fs.writeFileSync(filePath, JSON.stringi
 
 async function generateDemoOrganizations() {
   const generatedOrgsData = []; // Data to return
-  if (require.main === module) {
+  if (isMainModule) {
     console.log('\n🌱 CPF Demo Organizations Generator\n');
     console.log('='.repeat(60));
     ensureDirectoryExists(DATA_DIR);
@@ -460,12 +466,12 @@ async function generateDemoOrganizations() {
 
   let organizationsIndex;
   if (fs.existsSync(INDEX_FILE)) {
-    if (require.main === module) console.log('📂 Loading existing organizations index...');
+    if (isMainModule) console.log('📂 Loading existing organizations index...');
     const existingData = fs.readFileSync(INDEX_FILE, 'utf8');
     organizationsIndex = JSON.parse(existingData);
-    if (require.main === module) console.log(`   Found ${organizationsIndex.organizations.length} existing organizations\n`);
+    if (isMainModule) console.log(`   Found ${organizationsIndex.organizations.length} existing organizations\n`);
   } else {
-    if (require.main === module) console.log('📂 Creating new organizations index...\n');
+    if (isMainModule) console.log('📂 Creating new organizations index...\n');
     organizationsIndex = { metadata: { version: '2.0', last_updated: new Date().toISOString(), total_organizations: 0 }, organizations: [] };
   }
 
@@ -473,12 +479,12 @@ async function generateDemoOrganizations() {
   let totalAssessments = 0, addedCount = 0, skippedCount = 0;
 
   for (const orgConfig of DEMO_ORGANIZATIONS) {
-    if (require.main === module) {
+    if (isMainModule) {
       console.log(`\n📊 Processing: ${orgConfig.name}`);
       console.log('-'.repeat(60));
     }
 
-    if (existingOrgsMap.has(orgConfig.id) && require.main === module) {
+    if (existingOrgsMap.has(orgConfig.id) && isMainModule) {
       console.log(`   ⏭️  SKIPPED: Organization "${orgConfig.id}" already exists`);
       skippedCount++;
       const orgData = generateOrganization(orgConfig);
@@ -489,7 +495,7 @@ async function generateDemoOrganizations() {
     const orgData = generateOrganization(orgConfig);
     generatedOrgsData.push(orgData);
 
-    if (require.main === module) {
+    if (isMainModule) {
       const orgFilePath = path.join(ORGS_DIR, `${orgConfig.id}.json`);
       writeJsonFile(orgFilePath, orgData);
       console.log(`   ✓ Saved: ${orgFilePath}`);
@@ -507,7 +513,7 @@ async function generateDemoOrganizations() {
     }
   }
 
-  if (require.main === module) {
+  if (isMainModule) {
     organizationsIndex.metadata.last_updated = new Date().toISOString();
     organizationsIndex.metadata.total_organizations = organizationsIndex.organizations.length;
     writeJsonFile(INDEX_FILE, organizationsIndex);
@@ -551,7 +557,7 @@ function getRiskLabel(score) {
   return '🔴 HIGH';
 }
 
-if (require.main === module) {
+if (isMainModule) {
   generateDemoOrganizations()
     .then(() => {
       console.log('✅ Demo organizations generated successfully!\n');
@@ -563,4 +569,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { generateDemoOrganizations, generateOrganization };
+export { generateDemoOrganizations, generateOrganization };
