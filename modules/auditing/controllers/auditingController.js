@@ -14,6 +14,11 @@ function transformAssessmentData(dbAssessment) {
   const assessments = {};
   const categoryStats = {};
 
+  // Check if we have pre-calculated metadata (from seed script)
+  const hasPreCalculatedData = dbAssessment.metadata &&
+                                 dbAssessment.metadata.maturity_model &&
+                                 dbAssessment.metadata.category_stats;
+
   // Transform assessment_data from "1-1" format to "1.1" format with bayesian_score
   const assessmentData = dbAssessment.assessment_data || {};
 
@@ -26,13 +31,16 @@ function transformAssessmentData(dbAssessment) {
     const value = data.value || 0;
     const bayesianScore = value === 0 ? 0 : value / 3;
 
+    // Use raw_data from DB if available, otherwise create minimal structure
+    const rawData = data.raw_data || {
+      client_conversation: {
+        responses: data.notes ? { note: data.notes } : {}
+      }
+    };
+
     assessments[indicatorId] = {
       bayesian_score: bayesianScore,
-      raw_data: {
-        client_conversation: {
-          responses: data.notes ? { note: data.notes } : {}
-        }
-      },
+      raw_data: rawData,
       last_updated: data.last_updated
     };
 
@@ -63,12 +71,18 @@ function transformAssessmentData(dbAssessment) {
   for (const [cat, stats] of Object.entries(categoryStats)) {
     const avgRisk = stats.assessed > 0 ? stats.totalRisk / stats.assessed : 0;
     const completion = stats.total > 0 ? (stats.assessed / stats.total) * 100 : 0;
+    const avgConfidence = stats.assessed > 0 && stats.values.length > 0 ? 0.85 : 0; // Default confidence
 
     byCategory[cat] = {
+      avg_score: avgRisk,
+      completion_percentage: completion,
+      total_assessments: stats.assessed,
+      total: stats.total,
+      avg_confidence: avgConfidence,
+      // Keep legacy names for backward compatibility
       risk: avgRisk,
       completion: completion,
-      assessed: stats.assessed,
-      total: stats.total
+      assessed: stats.assessed
     };
 
     totalAssessed += stats.assessed;
@@ -107,53 +121,91 @@ function transformAssessmentData(dbAssessment) {
   const complianceStatus = cpfScore >= 75 ? 'compliant' :
                           cpfScore >= 60 ? 'at_risk' : 'non_compliant';
 
-  // Maturity Model object
-  const maturityModel = {
-    maturity_level: maturityLevel,
-    level_name: levelName,
-    cpf_score: cpfScore,
-    convergence_index: convergenceIndex,
-    green_domains_count: greenDomains,
-    yellow_domains_count: yellowDomains,
-    red_domains_count: redDomains,
-    sector_benchmark: {
-      percentile: percentile,
-      sector_average: sectorAverage,
-      gap: gap
-    },
-    compliance: {
-      gdpr: {
-        status: complianceStatus,
-        score: cpfScore,
-        gaps: cpfScore < 75 ? ['Security awareness training', 'Incident response procedures'] : []
-      },
-      nis2: {
-        status: complianceStatus,
-        score: cpfScore,
-        gaps: cpfScore < 75 ? ['Risk management', 'Supply chain security'] : []
-      },
-      dora: {
-        status: cpfScore >= 70 ? 'compliant' : cpfScore >= 55 ? 'at_risk' : 'non_compliant',
-        score: cpfScore,
-        gaps: cpfScore < 70 ? ['ICT risk management', 'Digital resilience testing'] : []
-      },
-      iso27001: {
-        status: complianceStatus,
-        score: cpfScore,
-        gaps: cpfScore < 75 ? ['Information security controls', 'Risk assessment'] : []
-      }
-    },
-    certification_path: {
-      current_readiness: cpfScore,
-      recommended_certifications: cpfScore >= 70 ? ['ISO 27001', 'SOC 2'] : ['ISO 27001 Gap Analysis'],
-      estimated_months: cpfScore >= 70 ? 6 : 12
-    },
-    roi_analysis: {
-      risk_reduction: Math.round(cpfScore * 0.8),
-      cost_savings_annual: Math.round(cpfScore * 1000),
-      compliance_value: cpfScore >= 75 ? 'High' : 'Medium'
+  // Use pre-calculated data if available, otherwise use calculated data
+  let finalMaturityModel;
+  let finalByCategory;
+  let finalCompletion;
+
+  if (hasPreCalculatedData) {
+    // Use pre-calculated metadata from seed script
+    finalMaturityModel = dbAssessment.metadata.maturity_model;
+
+    // Transform category_stats to by_category format with frontend-expected field names
+    finalByCategory = {};
+    for (const [cat, stats] of Object.entries(dbAssessment.metadata.category_stats)) {
+      finalByCategory[cat] = {
+        avg_score: stats.risk || stats.avg_score || 0,
+        completion_percentage: stats.completion || stats.completion_percentage || 0,
+        total_assessments: stats.assessed || stats.total_assessments || 0,
+        total: stats.total || 10,
+        avg_confidence: stats.avg_confidence || 0.85,
+        // Keep legacy names for backward compatibility
+        risk: stats.risk || stats.avg_score || 0,
+        completion: stats.completion || stats.completion_percentage || 0,
+        assessed: stats.assessed || stats.total_assessments || 0
+      };
     }
-  };
+
+    finalCompletion = {
+      percentage: dbAssessment.metadata.completion_percentage || 0,
+      assessed_indicators: dbAssessment.metadata.assessed_indicators || 0
+    };
+  } else {
+    // Use calculated data (legacy/fallback)
+    const maturityModel = {
+      maturity_level: maturityLevel,
+      level_name: levelName,
+      cpf_score: cpfScore,
+      convergence_index: convergenceIndex,
+      green_domains_count: greenDomains,
+      yellow_domains_count: yellowDomains,
+      red_domains_count: redDomains,
+      sector_benchmark: {
+        percentile: percentile,
+        sector_average: sectorAverage,
+        gap: gap
+      },
+      compliance: {
+        gdpr: {
+          status: complianceStatus,
+          score: cpfScore,
+          gaps: cpfScore < 75 ? ['Security awareness training', 'Incident response procedures'] : []
+        },
+        nis2: {
+          status: complianceStatus,
+          score: cpfScore,
+          gaps: cpfScore < 75 ? ['Risk management', 'Supply chain security'] : []
+        },
+        dora: {
+          status: cpfScore >= 70 ? 'compliant' : cpfScore >= 55 ? 'at_risk' : 'non_compliant',
+          score: cpfScore,
+          gaps: cpfScore < 70 ? ['ICT risk management', 'Digital resilience testing'] : []
+        },
+        iso27001: {
+          status: complianceStatus,
+          score: cpfScore,
+          gaps: cpfScore < 75 ? ['Information security controls', 'Risk assessment'] : []
+        }
+      },
+      certification_path: {
+        current_readiness: cpfScore,
+        recommended_certifications: cpfScore >= 70 ? ['ISO 27001', 'SOC 2'] : ['ISO 27001 Gap Analysis'],
+        estimated_months: cpfScore >= 70 ? 6 : 12
+      },
+      roi_analysis: {
+        risk_reduction: Math.round(cpfScore * 0.8),
+        cost_savings_annual: Math.round(cpfScore * 1000),
+        compliance_value: cpfScore >= 75 ? 'High' : 'Medium'
+      }
+    };
+
+    finalMaturityModel = maturityModel;
+    finalByCategory = byCategory;
+    finalCompletion = {
+      percentage: completionPercentage,
+      assessed_indicators: totalAssessed
+    };
+  }
 
   return {
     id: dbAssessment.organization_id,
@@ -162,12 +214,9 @@ function transformAssessmentData(dbAssessment) {
     status: dbAssessment.organization_status,
     assessments,
     aggregates: {
-      by_category: byCategory,
-      completion: {
-        percentage: completionPercentage,
-        assessed_indicators: totalAssessed
-      },
-      maturity_model: maturityModel
+      by_category: finalByCategory,
+      completion: finalCompletion,
+      maturity_model: finalMaturityModel
     },
     metadata: dbAssessment.metadata || { language: 'it-IT' },
     created_at: dbAssessment.created_at,
