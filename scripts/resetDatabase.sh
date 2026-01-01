@@ -12,7 +12,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # Carica DATABASE_URL da .env usando grep (più sicuro di source)
-if [ -f "$PROJECT_ROOT/.env" ]; then
+# MA solo se non è già definito (es. passato nel comando)
+if [ -z "$DATABASE_URL" ] && [ -f "$PROJECT_ROOT/.env" ]; then
   export DATABASE_URL=$(grep -E "^DATABASE_URL=" "$PROJECT_ROOT/.env" | cut -d '=' -f 2- | tr -d '"' | tr -d "'")
 fi
 
