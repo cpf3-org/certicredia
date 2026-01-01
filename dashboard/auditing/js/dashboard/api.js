@@ -1,7 +1,7 @@
-import { 
-    organizations, setOrganizations, 
-    setSelectedOrgData, setCategoryDescriptions, 
-    selectedOrgId 
+import {
+    organizations, setOrganizations,
+    setSelectedOrgId, setSelectedOrgData, setCategoryDescriptions,
+    selectedOrgId
 } from './state.js';
 import { renderOrganizations } from './render-list.js';
 import { renderAssessmentDetails } from './render-details.js';
@@ -65,6 +65,7 @@ export async function loadAllData() {
 
 export async function loadOrganizationDetails(orgId) {
     try {
+        console.log(`🔄 Loading organization details for ID: ${orgId}`);
         const response = await fetch(`/api/auditing/organizations/${orgId}`, {
             cache: 'no-cache',
             headers: {
@@ -73,16 +74,23 @@ export async function loadOrganizationDetails(orgId) {
                 'Expires': '0'
             }
         });
+
+        console.log('📡 Response status:', response.status);
         const result = await response.json();
+        console.log('📦 Organization data received:', result);
 
         if (result.success) {
+            console.log('✅ Setting organization data:', result.data.name);
+            setSelectedOrgId(orgId);
             setSelectedOrgData(result.data);
             renderAssessmentDetails();
+            console.log('✅ Organization details rendered successfully');
         } else {
+            console.error('❌ Failed to load organization:', result);
             showAlert('Failed to load organization details', 'error');
         }
     } catch (error) {
-        console.error('Error loading organization details:', error);
+        console.error('❌ Error loading organization details:', error);
         showAlert('Failed to load organization details: ' + error.message, 'error');
     }
 }
