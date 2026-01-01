@@ -1,15 +1,21 @@
 import { loadAllData, loadOrganizationDetails } from './api.js';
 import { setupDashboardEventDelegation } from './events.js';
 import { setupClientEventDelegation } from '../client/index.js'; // Importante! Attiva eventi client
+import { getSelectedOrgData } from './state.js';
 
 // Global callback for client to refresh dashboard
 window.dashboardReloadOrganization = async function() {
     // Re-imports needed because this is global scope
     // We assume selectedOrgId is managed in state
-    const { selectedOrgId } = await import('./state.js'); 
+    const { selectedOrgId } = await import('./state.js');
     if (selectedOrgId) {
         await loadOrganizationDetails(selectedOrgId);
     }
+};
+
+// Global accessor for client to get current org data
+window.dashboardGetSelectedOrgData = function() {
+    return getSelectedOrgData();
 };
 
 document.addEventListener('DOMContentLoaded', async () => {

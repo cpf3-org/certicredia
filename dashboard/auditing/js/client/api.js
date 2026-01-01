@@ -86,17 +86,23 @@ export async function saveToAPI() {
     const completionRate = currentScore.details?.conversation_breakdown?.completion_rate || 0;
     const confidence = Math.round((0.5 + (completionRate * 0.45)) * 100) / 100;
 
-    const assessmentData = {
-        indicator_id: indicator,
-        title: currentData.fieldKit.title || '',
-        category: currentData.fieldKit.category || '',
-        bayesian_score: currentScore.final_score,
-        confidence: confidence,
-        maturity_level: currentScore.maturity_level || 'yellow',
-        assessor: currentData.metadata.auditor || 'Client User',
-        assessment_date: timestamp,
+    // Convert bayesian_score (0-1) to value (0-3) for DB
+    const bayesianScore = currentScore.final_score;
+    let value;
+    if (bayesianScore === 0) value = 0;
+    else if (bayesianScore < 0.33) value = 1;
+    else if (bayesianScore < 0.66) value = 2;
+    else value = 3;
+
+    // Prepare single indicator data in DB format
+    const indicatorKey = indicator.replace('.', '-'); // "1.1" -> "1-1"
+    const indicatorData = {
+        value: value,
+        notes: currentData.metadata.notes || `Assessment for ${indicator}`,
+        last_updated: timestamp,
         raw_data: {
-            quick_assessment: currentScore.details?.quick_assessment_breakdown || {},
+            fieldKit: currentData.fieldKit,
+            quick_assessment: currentScore.details?.quick_assessment_breakdown || [],
             client_conversation: {
                 responses: currentData.responses || {},
                 scores: currentScore,
@@ -107,10 +113,32 @@ export async function saveToAPI() {
         }
     };
 
-    const response = await fetch(`/api/organizations/${organizationContext.orgId}/assessments`, {
-        method: 'POST',
+    // Get existing assessment data from dashboard state
+    const selectedOrgData = window.dashboardGetSelectedOrgData ? window.dashboardGetSelectedOrgData() : null;
+    const existingAssessmentData = {};
+
+    // Merge existing assessments with updated indicator
+    if (selectedOrgData && selectedOrgData.assessments) {
+        for (const [key, assessment] of Object.entries(selectedOrgData.assessments)) {
+            const dbKey = key.replace('.', '-');
+            existingAssessmentData[dbKey] = {
+                value: assessment.value || Math.round(assessment.bayesian_score * 3),
+                notes: assessment.notes || '',
+                last_updated: assessment.last_updated || timestamp,
+                raw_data: assessment.raw_data || {}
+            };
+        }
+    }
+
+    // Update with current indicator
+    existingAssessmentData[indicatorKey] = indicatorData;
+
+    const response = await fetch(`/api/auditing/organizations/${organizationContext.orgId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(assessmentData)
+        body: JSON.stringify({
+            assessmentData: existingAssessmentData
+        })
     });
 
     const result = await response.json();
@@ -121,7 +149,7 @@ export async function saveToAPI() {
             window.dashboardReloadOrganization().catch(err => console.error(err));
         }
     } else {
-        throw new Error(result.error || 'API save failed');
+        throw new Error(result.error || 'Endpoint non trovato');
     }
 }
 
