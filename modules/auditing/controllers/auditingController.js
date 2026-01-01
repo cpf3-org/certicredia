@@ -263,10 +263,11 @@ export async function getOrganizationAssessment(req, res) {
     const { organizationId } = req.params;
     const assessment = await auditingService.getAssessmentByOrganization(parseInt(organizationId));
 
+    // Always get organization data for additional fields
+    const org = await organizationService.getOrganizationById(parseInt(organizationId));
+
     if (!assessment) {
       // If no assessment exists, return organization basic data with empty assessments
-      const org = await organizationService.getOrganizationById(parseInt(organizationId));
-
       return res.json({
         success: true,
         data: {
@@ -274,10 +275,20 @@ export async function getOrganizationAssessment(req, res) {
           name: org.name,
           organization_type: org.organization_type,
           status: org.status,
+          industry: org.industry || org.metadata?.industry || 'Other',
+          size: org.size || org.metadata?.size || 'medium',
+          country: org.country || 'Italia',
+          language: 'it-IT',
           assessments: {},
           aggregates: {
             by_category: {},
             completion: { percentage: 0, assessed_indicators: 0 }
+          },
+          stats: {
+            completion_percentage: 0,
+            overall_risk: 0,
+            total_assessments: 0,
+            avg_confidence: 0
           },
           metadata: { language: 'it-IT' },
           created_at: org.created_at,
@@ -289,9 +300,26 @@ export async function getOrganizationAssessment(req, res) {
     // Transform assessment data to frontend format
     const transformedData = transformAssessmentData(assessment);
 
+    // Add organization fields and stats for frontend compatibility
+    const enrichedData = {
+      ...transformedData,
+      industry: org.industry || org.metadata?.industry || 'Other',
+      size: org.size || org.metadata?.size || 'medium',
+      country: org.country || 'Italia',
+      language: transformedData.metadata?.language || 'it-IT',
+      stats: {
+        completion_percentage: transformedData.aggregates?.completion?.percentage || 0,
+        overall_risk: transformedData.aggregates?.maturity_model?.convergence_index
+          ? transformedData.aggregates.maturity_model.convergence_index / 10
+          : 0,
+        total_assessments: transformedData.aggregates?.completion?.assessed_indicators || 0,
+        avg_confidence: 0.85
+      }
+    };
+
     res.json({
       success: true,
-      data: transformedData
+      data: enrichedData
     });
   } catch (error) {
     logger.error('Error getting organization assessment:', error);
