@@ -2,28 +2,41 @@
 
 # Script per pulire completamente il database e ricreare i dati demo
 # Uso: ./scripts/resetDatabase.sh
+#
+# IMPORTANTE: Definisci DATABASE_URL nel file .env
+# Esempio locale: DATABASE_URL=postgresql://user:password@localhost:5432/certicredia
+# Esempio Neon:   DATABASE_URL=postgresql://user:pass@ep-xxx.neon.tech/db?sslmode=require
 
 # Get script directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
-# Carica variabili d'ambiente da .env
+# Carica DATABASE_URL da .env usando grep (più sicuro di source)
 if [ -f "$PROJECT_ROOT/.env" ]; then
-  echo "📋 Caricamento variabili da .env..."
-  # Carica solo le righe che sono nel formato VARIABILE=valore
-  while IFS= read -r line || [ -n "$line" ]; do
-    # Salta righe vuote e commenti
-    [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
-    # Esporta solo righe con formato KEY=VALUE
-    if [[ "$line" =~ ^[A-Z_][A-Z0-9_]*= ]]; then
-      export "$line"
-    fi
-  done < "$PROJECT_ROOT/.env"
+  export DATABASE_URL=$(grep -E "^DATABASE_URL=" "$PROJECT_ROOT/.env" | cut -d '=' -f 2- | tr -d '"' | tr -d "'")
 fi
 
 echo "========================================="
 echo "RESET DATABASE CERTICREDIA"
 echo "========================================="
+echo ""
+
+# Verifica che DATABASE_URL sia definito
+if [ -z "$DATABASE_URL" ]; then
+  echo "❌ ERRORE: DATABASE_URL non definito!"
+  echo ""
+  echo "Aggiungi DATABASE_URL al file .env:"
+  echo ""
+  echo "Locale:"
+  echo "  DATABASE_URL=postgresql://user:password@localhost:5432/certicredia"
+  echo ""
+  echo "Neon:"
+  echo "  DATABASE_URL=postgresql://user:pass@ep-xxx.neon.tech/db?sslmode=require"
+  echo ""
+  exit 1
+fi
+
+echo "📋 Database: ${DATABASE_URL%%@*}@***"
 echo ""
 echo "ATTENZIONE: Questo eliminerà TUTTI i dati dal database!"
 echo "Premi CTRL+C per annullare, INVIO per continuare..."
@@ -32,25 +45,7 @@ read
 echo ""
 echo "1. Connessione al database e pulizia tabelle..."
 
-# Determina come connettersi al database
-if [ -n "$DATABASE_URL" ]; then
-  echo "   Usando DATABASE_URL (Neon/remoto)..."
-  DB_CONNECTION="$DATABASE_URL"
-else
-  # Costruisci connection string da variabili env
-  echo "   Usando variabili .env (locale)..."
-  DB_HOST="${DB_HOST:-localhost}"
-  DB_PORT="${DB_PORT:-5432}"
-  DB_NAME="${DB_NAME:-certicredia}"
-  DB_USER="${DB_USER:-postgres}"
-  DB_PASSWORD="${DB_PASSWORD:-}"
-
-  if [ -n "$DB_PASSWORD" ]; then
-    DB_CONNECTION="postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
-  else
-    DB_CONNECTION="postgresql://${DB_USER}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
-  fi
-fi
+DB_CONNECTION="$DATABASE_URL"
 
 # Drop e ricrea tutte le tabelle
 psql "$DB_CONNECTION" << EOF
