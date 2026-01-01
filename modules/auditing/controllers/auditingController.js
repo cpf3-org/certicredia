@@ -34,13 +34,15 @@ function transformAssessmentData(dbAssessment) {
       }
     };
 
+    // Get value for aggregation
+    const value = data.value || 0;
+
     // Use original bayesian_score from raw_data if available (more accurate)
     // Otherwise convert value (0-3) to bayesian_score (0-1) as fallback
     let bayesianScore;
     if (rawData.client_conversation?.scores?.final_score !== undefined) {
       bayesianScore = rawData.client_conversation.scores.final_score;
     } else {
-      const value = data.value || 0;
       bayesianScore = value === 0 ? 0 : value / 3;
     }
 
