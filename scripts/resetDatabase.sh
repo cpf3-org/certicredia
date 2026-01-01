@@ -10,9 +10,15 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 # Carica variabili d'ambiente da .env
 if [ -f "$PROJECT_ROOT/.env" ]; then
   echo "📋 Caricamento variabili da .env..."
-  set -a
-  source "$PROJECT_ROOT/.env"
-  set +a
+  # Carica solo le righe che sono nel formato VARIABILE=valore
+  while IFS= read -r line || [ -n "$line" ]; do
+    # Salta righe vuote e commenti
+    [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+    # Esporta solo righe con formato KEY=VALUE
+    if [[ "$line" =~ ^[A-Z_][A-Z0-9_]*= ]]; then
+      export "$line"
+    fi
+  done < "$PROJECT_ROOT/.env"
 fi
 
 echo "========================================="
