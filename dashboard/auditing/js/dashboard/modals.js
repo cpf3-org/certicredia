@@ -24,17 +24,14 @@ export async function openIntegratedClient(indicatorId, orgId) {
     if(modalContent) modalContent.innerHTML = `<div class="loading-spinner"></div> Loading Indicator ${indicatorId}...`;
 
     // 2. Fetch Indicator JSON
-    // Priority: sessionStorage (modal choice) > localStorage (dashboard lang) > org metadata
-    const sessionLang = sessionStorage.getItem('modal-language');
+    // UNIFORM: localStorage (global lang) > org metadata
     const dashboardLang = localStorage.getItem('cpf-lang'); // 'en' or 'it'
     let lang;
-    if (sessionLang) {
-        lang = sessionLang; // Use modal choice if exists
-    } else if (dashboardLang) {
-        // Convert dashboard short lang to ISO format
+    if (dashboardLang) {
+        // Convert short lang to ISO format
         lang = dashboardLang === 'it' ? 'it-IT' : 'en-US';
     } else {
-        // Fallback to org metadata or default
+        // Fallback to org metadata
         lang = selectedOrgData.metadata?.language || 'en-US';
     }
     const [catNum] = indicatorId.split('.');
@@ -167,8 +164,8 @@ export async function switchModalLanguage(shortLang) {
         return;
     }
 
-    // Save language preference for this session
-    sessionStorage.setItem('modal-language', isoLang);
+    // UNIFORM: Save to localStorage (same as dashboard)
+    localStorage.setItem('cpf-lang', shortLang);
 
     // Update organization context
     organizationContext.language = isoLang;
@@ -201,6 +198,16 @@ export async function switchModalLanguage(shortLang) {
 
         // Update language switcher
         updateModalLanguageSwitcher(isoLang);
+
+        // UNIFORM: Update dashboard language switcher too
+        document.querySelectorAll('.lang-switcher-auditing button').forEach(btn => {
+            const btnLang = btn.getAttribute('data-lang');
+            if (btnLang === shortLang) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
 
         console.log(`✅ Language switched to ${isoLang}`);
     } catch (error) {
