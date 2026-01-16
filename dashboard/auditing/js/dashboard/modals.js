@@ -24,9 +24,19 @@ export async function openIntegratedClient(indicatorId, orgId) {
     if(modalContent) modalContent.innerHTML = `<div class="loading-spinner"></div> Loading Indicator ${indicatorId}...`;
 
     // 2. Fetch Indicator JSON
-    // Check for session language preference first, then org metadata
+    // Priority: sessionStorage (modal choice) > localStorage (dashboard lang) > org metadata
     const sessionLang = sessionStorage.getItem('modal-language');
-    const lang = sessionLang || selectedOrgData.metadata?.language || 'en-US';
+    const dashboardLang = localStorage.getItem('cpf-lang'); // 'en' or 'it'
+    let lang;
+    if (sessionLang) {
+        lang = sessionLang; // Use modal choice if exists
+    } else if (dashboardLang) {
+        // Convert dashboard short lang to ISO format
+        lang = dashboardLang === 'it' ? 'it-IT' : 'en-US';
+    } else {
+        // Fallback to org metadata or default
+        lang = selectedOrgData.metadata?.language || 'en-US';
+    }
     const [catNum] = indicatorId.split('.');
     const catName = CATEGORY_MAP[catNum];
     const url = `/auditor-field-kit/interactive/${lang}/${catNum}.x-${catName}/indicator_${indicatorId}.json`;
